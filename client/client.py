@@ -10,7 +10,7 @@ import os
 import flwr as fl
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-#teste
+
 def load_data():
     """Load CIFAR-10 (training and test set)."""
     transform = transforms.Compose(
@@ -92,14 +92,14 @@ class CifarClient(fl.client.NumPyClient):
     def evaluate(self, parameters, config):
         self.set_parameters(parameters)
         loss, accuracy = test(net, testloader)
-        return float(loss), num_examples["testset"], {"accuracy": float(accuracy)}
+        return float(loss), num_examples["testset"], {"loss" : float(loss), "accuracy": float(accuracy)}
     
 
 
 # Inicia el cliente
 if __name__ == "__main__":
-    #fl.client.start_client(server_address="127.0.0.1:8080", client=CifarClient().to_client()) #sin dcoker
-    fl.client.start_client(server_address=os.environ['SERVER_IP'], client=CifarClient().to_client())
+    fl.client.start_client(server_address="127.0.0.1:8080", client=CifarClient().to_client()) #sin dcoker
+    #fl.client.start_client(server_address=os.environ['SERVER_IP'], client=CifarClient().to_client())
 
 
 #fl.client.start_client(server_address="127.0.0.1:8080", client=CifarClient().to_client()) #si
