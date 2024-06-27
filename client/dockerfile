@@ -1,0 +1,9 @@
+FROM python:3.8-slim
+
+RUN pip install flwr numpy torch torchvision
+
+COPY client.py /app/client.py
+
+WORKDIR /app
+
+CMD ["python", "client.py"]
