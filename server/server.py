@@ -4,6 +4,13 @@ from typing import Dict, List, Tuple
 
 
 class CustomStrategy(fl.server.strategy.FedAvg):
+    def __init__(self, log_file: str = "metrics.log"):
+        super().__init__()
+        self.log_file = log_file
+        #Create the log file and write the header
+        with open(self.log_file, "w") as f:
+            f.write("Round, Loss, Accuracy\n")
+
     def aggregate_evaluate(
         self,
         rnd: int,
@@ -17,6 +24,10 @@ class CustomStrategy(fl.server.strategy.FedAvg):
         loss_aggregated = sum([fit_res.metrics["loss"] for _, fit_res in results]) / len(results)
         accuracy_aggregated = sum([fit_res.metrics["accuracy"] for _, fit_res in results]) / len(results)
         
+        #Log the metrics
+        with open(self.log_file, "a") as f:
+            f.write(f"{rnd}, {loss_aggregated}, {accuracy_aggregated}\n")
+            
         print(f"Round {rnd} - Loss: {loss_aggregated}, Accuracy: {accuracy_aggregated}")
         
         return loss_aggregated, {"accuracy": accuracy_aggregated}

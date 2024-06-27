@@ -1,5 +1,4 @@
 from collections import OrderedDict
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -104,7 +103,6 @@ class CifarClient(fl.client.NumPyClient):
         loss, accuracy = test(net, testloader)
         return float(loss), num_examples["testset"], {"loss" : float(loss), "accuracy": float(accuracy)}
     
-
 
 # Inicia el cliente
 if __name__ == "__main__":
