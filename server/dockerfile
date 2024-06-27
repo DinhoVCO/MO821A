@@ -1,0 +1,9 @@
+FROM python:3.8-slim
+
+RUN pip install flwr
+
+COPY server.py /app/server.py
+
+WORKDIR /app
+
+CMD ["python", "server.py"]
