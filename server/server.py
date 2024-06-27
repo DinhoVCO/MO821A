@@ -21,7 +21,6 @@ class CustomStrategy(fl.server.strategy.FedAvg):
         
         return loss_aggregated, {"accuracy": accuracy_aggregated}
 
-
 # Inicia el servidor
 if __name__ == "__main__":
     strategy = CustomStrategy()
