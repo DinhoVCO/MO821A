@@ -10,7 +10,7 @@ import os
 import flwr as fl
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
+#teste
 def load_data():
     """Load CIFAR-10 (training and test set)."""
     transform = transforms.Compose(
