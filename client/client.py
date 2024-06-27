@@ -9,6 +9,7 @@ import os
 import flwr as fl
 import random
 from torch.utils.data import Subset
+from sklearn.metrics import f1_score
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -49,6 +50,8 @@ def test(net, testloader):
     """Validate the network on the entire test set."""
     criterion = torch.nn.CrossEntropyLoss()
     correct, total, loss = 0, 0, 0.0
+    all_labels = []
+    all_preds = []
     with torch.no_grad():
         for data in testloader:
             images, labels = data[0].to(DEVICE), data[1].to(DEVICE)
@@ -57,8 +60,11 @@ def test(net, testloader):
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
+            all_labels.extend(labels.cpu.numpy())
+            all_preds.extend(predicted.cpu().numpy())
     accuracy = correct / total
-    return loss, accuracy
+    f1 = f1_score(all_labels, all_preds, average="weighted")
+    return loss, accuracy, f1
 
 class Net(nn.Module):
     def __init__(self) -> None:
@@ -100,8 +106,8 @@ class CifarClient(fl.client.NumPyClient):
 
     def evaluate(self, parameters, config):
         self.set_parameters(parameters)
-        loss, accuracy = test(net, testloader)
-        return float(loss), num_examples["testset"], {"loss" : float(loss), "accuracy": float(accuracy)}
+        loss, accuracy, f1 = test(net, testloader)
+        return float(loss), num_examples["testset"], {"loss" : float(loss), "accuracy": float(accuracy), "f1": float(f1)}
     
 
 # Inicia el cliente
