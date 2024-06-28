@@ -1,5 +1,4 @@
 from collections import OrderedDict
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -8,19 +7,30 @@ from torch.utils.data import DataLoader
 from torchvision.datasets import CIFAR10
 import os
 import flwr as fl
+import random
+from torch.utils.data import Subset
+from sklearn.metrics import f1_score
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 def load_data():
     """Load CIFAR-10 (training and test set)."""
     transform = transforms.Compose(
-    [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
+        [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
     )
     trainset = CIFAR10(".", train=True, download=True, transform=transform)
     testset = CIFAR10(".", train=False, download=True, transform=transform)
-    trainloader = DataLoader(trainset, batch_size=32, shuffle=True)
-    testloader = DataLoader(testset, batch_size=32)
-    num_examples = {"trainset" : len(trainset), "testset" : len(testset)}
+
+    # Create subsets
+    train_indices = random.sample(range(len(trainset)), 5000)
+    test_indices = random.sample(range(len(testset)), 1000)
+    train_subset = Subset(trainset, train_indices)
+    test_subset = Subset(testset, test_indices)
+
+    trainloader = DataLoader(train_subset, batch_size=32, shuffle=True) #usar trainset em train_subset para dados completos
+    testloader = DataLoader(test_subset, batch_size=32) #usar testset em test_subset para dados completos
+
+    num_examples = {"trainset": len(train_subset), "testset": len(test_subset)}
     return trainloader, testloader, num_examples
 
 def train(net, trainloader, epochs):
@@ -40,6 +50,8 @@ def test(net, testloader):
     """Validate the network on the entire test set."""
     criterion = torch.nn.CrossEntropyLoss()
     correct, total, loss = 0, 0, 0.0
+    all_labels = []
+    all_preds = []
     with torch.no_grad():
         for data in testloader:
             images, labels = data[0].to(DEVICE), data[1].to(DEVICE)
@@ -48,8 +60,11 @@ def test(net, testloader):
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
+            all_labels.extend(labels.cpu().numpy())
+            all_preds.extend(predicted.cpu().numpy())
     accuracy = correct / total
-    return loss, accuracy
+    f1 = f1_score(all_labels, all_preds, average="weighted")
+    return loss, accuracy, f1
 
 class Net(nn.Module):
     def __init__(self) -> None:
@@ -91,10 +106,9 @@ class CifarClient(fl.client.NumPyClient):
 
     def evaluate(self, parameters, config):
         self.set_parameters(parameters)
-        loss, accuracy = test(net, testloader)
-        return float(loss), num_examples["testset"], {"loss" : float(loss), "accuracy": float(accuracy)}
+        loss, accuracy, f1 = test(net, testloader)
+        return float(loss), num_examples["testset"], {"loss" : float(loss), "accuracy": float(accuracy), "f1": float(f1)}
     
-
 
 # Inicia el cliente
 if __name__ == "__main__":
