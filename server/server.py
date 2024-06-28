@@ -2,6 +2,9 @@ import flwr as fl
 import os
 from typing import Dict, List, Tuple
 
+from flwr.common import FitRes, Parameters
+from flwr.server.client_proxy import ClientProxy
+
 
 class CustomStrategy(fl.server.strategy.FedAvg):
     def __init__(self, log_file: str = "metrics.log"):

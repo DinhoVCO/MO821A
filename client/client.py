@@ -60,7 +60,7 @@ def test(net, testloader):
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
-            all_labels.extend(labels.cpu.numpy())
+            all_labels.extend(labels.cpu().numpy())
             all_preds.extend(predicted.cpu().numpy())
     accuracy = correct / total
     f1 = f1_score(all_labels, all_preds, average="weighted")
