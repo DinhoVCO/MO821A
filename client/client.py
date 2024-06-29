@@ -10,6 +10,7 @@ import flwr as fl
 import random
 from torch.utils.data import Subset
 from sklearn.metrics import f1_score
+import time
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -100,9 +101,12 @@ class CifarClient(fl.client.NumPyClient):
         net.load_state_dict(state_dict, strict=True)
 
     def fit(self, parameters, config):
+        start_time = time.time()
         self.set_parameters(parameters)
         train(net, trainloader, epochs=1)
-        return self.get_parameters(config={}), num_examples["trainset"], {}
+        end_time = time.time()
+        computation_time = end_time - start_time
+        return self.get_parameters(config={}), num_examples["trainset"], {"computation_time": computation_time}
 
     def evaluate(self, parameters, config):
         self.set_parameters(parameters)
