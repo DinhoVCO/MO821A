@@ -1,5 +1,5 @@
 # MO821A - Tópicos em Redes de Computadores II
-## Análise de desempenho do aprendizado federado: uma abordagem de simulac ¸˜ ao e emulação em  dispositivos heterogêneos
+## Análise de desempenho do aprendizado federado: uma abordagem de simulação e emulação em  dispositivos heterogêneos
 
 ## Quick start
 ### Building images
