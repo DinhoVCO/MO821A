@@ -1,6 +1,8 @@
 from torch.utils.data import DataLoader
 from torchvision import transforms
 from flwr_datasets import FederatedDataset
+from flwr_datasets.partitioner import DirichletPartitioner
+
 
 class LoadDataset:
 
@@ -8,7 +10,13 @@ class LoadDataset:
         self.cid = cid
 
     def load_partition(self,dataset_name, n_clients, batch_size):
-        fds = FederatedDataset(dataset=dataset_name, partitioners={"train": n_clients})
+
+        partitioner = DirichletPartitioner(num_partitions=n_clients, partition_by="label",
+                                   alpha=0.5, min_partition_size=10,
+                                   self_balancing=True)
+        fds = FederatedDataset(dataset=dataset_name, partitioners={"train": partitioner})
+
+        #fds = FederatedDataset(dataset=dataset_name, partitioners={"train": n_clients})
         
         def apply_transforms(batch):
             transform = transforms.Compose(

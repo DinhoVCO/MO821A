@@ -9,7 +9,8 @@ from load_partition import LoadDataset
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 NUM_CLIENTS = int(os.environ.get("NUM_CLIENTS", 2))
-CLIENT_ID = int(os.environ.get("CLIENT_ID", 2))
+CLIENT_ID = int(os.environ.get("CLIENT_ID", 0))
+print(CLIENT_ID)
 MODEL_NAME = os.environ.get("MODEL", "resnet18")
 BATCH_SIZE = 32
 DATASET = os.environ.get("DATASET", "resnet18")
@@ -60,7 +61,7 @@ def test(net, testloader):
     return loss, accuracy, f1
 
 net = get_model(MODEL_NAME).to(DEVICE)
-trainloader, testloader, num_examples = LoadDataset(1).select_dataset(DATASET, 10, BATCH_SIZE)
+trainloader, testloader, num_examples = LoadDataset(CLIENT_ID).select_dataset(DATASET, NUM_CLIENTS, BATCH_SIZE)
 
 class CifarClient(fl.client.NumPyClient):
     def get_parameters(self, config):
