@@ -40,6 +40,6 @@ class CustomStrategy(fl.server.strategy.FedAvg):
 if __name__ == "__main__":
     strategy = CustomStrategy(log_file="metrics.log")
     fl.server.start_server(server_address="[::]:8080", config=fl.server.ServerConfig(num_rounds=2), strategy=strategy)
-    #fl.server.start_server(server_address=os.environ['SERVER_IP'],config=fl.server.ServerConfig(num_rounds=3))
+    #fl.server.start_server(server_address=os.environ['SERVER_IP'],config=fl.server.ServerConfig(num_rounds=2), strategy=strategy)
     #fl.server.start_server(server_address="127.0.0.1:8080", config=fl.server.ServerConfig(num_rounds=3))
-    #fl.server.start_server(config=fl.server.ServerConfig(num_rounds=3)) #si
+    #fl.server.start_server(config=fl.server.ServerConfig(num_rounds=3))

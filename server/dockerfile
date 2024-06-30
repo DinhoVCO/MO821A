@@ -1,8 +1,8 @@
 FROM python:3.8-slim
 
-RUN pip install flwr
-
 COPY server.py /app/server.py
+COPY server_requirements.txt .
+RUN pip install -r server_requirements.txt
 
 WORKDIR /app
 

@@ -10,6 +10,10 @@ import flwr as fl
 import random
 from torch.utils.data import Subset
 from sklearn.metrics import f1_score
+import torchvision.models as models
+
+# Importar la función get_model
+from models import get_model
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -66,27 +70,14 @@ def test(net, testloader):
     f1 = f1_score(all_labels, all_preds, average="weighted")
     return loss, accuracy, f1
 
-class Net(nn.Module):
-    def __init__(self) -> None:
-        super(Net, self).__init__()
-        self.conv1 = nn.Conv2d(3, 6, 5)
-        self.pool = nn.MaxPool2d(2, 2)
-        self.conv2 = nn.Conv2d(6, 16, 5)
-        self.fc1 = nn.Linear(16 * 5 * 5, 120)
-        self.fc2 = nn.Linear(120, 84)
-        self.fc3 = nn.Linear(84, 10)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x = self.pool(F.relu(self.conv1(x)))
-        x = self.pool(F.relu(self.conv2(x)))
-        x = x.view(-1, 16 * 5 * 5)
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        x = self.fc3(x)
-        return x
 
-# Load model and data
-net = Net().to(DEVICE)
+# Selección del modelo
+model_name = os.environ.get("MODEL", "resnet18")
+print(model_name)
+#model_name = "resnet18"
+net = get_model(model_name).to(DEVICE)
+
 trainloader, testloader, num_examples = load_data()
 
 

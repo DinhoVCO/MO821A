@@ -1,11 +1,11 @@
-version: '3.8'
-
 services:
   server:
-    image: 'fl-server:latest'
+    image: ${SERVER_IMAGE}
     container_name: fl_server
     environment:
-      - SERVER_IP=0.0.0.0:9999
+      - SERVER_IP=${SERVER_IP}
+      - MODEL=${MODEL}
+      - DATASET=${DATASET}
     networks:
       - default
 
@@ -13,6 +13,8 @@ services:
     image: 'fl-client:latest'
     environment:
       - SERVER_IP=fl_server:9999
+      - MODEL=${MODEL}
+      - DATASET=${DATASET}
     networks:
       - default
 
@@ -20,5 +22,7 @@ services:
     image: 'fl-client:latest'
     environment:
       - SERVER_IP=fl_server:9999
+      - MODEL=${MODEL}
+      - DATASET=${DATASET}
     networks:
       - default
