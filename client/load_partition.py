@@ -39,7 +39,7 @@ class LoadDataset:
         
         return trainloader, testloader, num_examples
 
-    def select_dataset(self, dataset_name, n_clients, batch_size,partitioner_type):
+    def select_dataset(self, dataset_name, n_clients, batch_size,partitioner_type='DIRICHELT'):
         if dataset_name == 'MNIST':
             return self.load_partition("nmist",n_clients, batch_size,partitioner_type)
         elif dataset_name == 'CIFAR10':

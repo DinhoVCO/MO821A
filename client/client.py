@@ -11,9 +11,11 @@ DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 NUM_CLIENTS = int(os.environ.get("NUM_CLIENTS", 2))
 CLIENT_ID = int(os.environ.get("CLIENT_ID", 0))
 print(CLIENT_ID)
-MODEL_NAME = os.environ.get("MODEL", "resnet18")
+MODEL_NAME = os.environ.get("MODEL", "mobilenet_v2")
 BATCH_SIZE = 32
-DATASET = os.environ.get("DATASET", "resnet18")
+DATASET = os.environ.get("DATASET", "CIFAR10")
+PARTITIONER = os.environ.get("PARTITIONER", "DIRICHELT")
+
 
 def train(net, trainloader, epochs: int, verbose=False):
     """Train the network on the training set."""
@@ -61,7 +63,7 @@ def test(net, testloader):
     return loss, accuracy, f1
 
 net = get_model(MODEL_NAME).to(DEVICE)
-trainloader, testloader, num_examples = LoadDataset(CLIENT_ID).select_dataset(DATASET, NUM_CLIENTS, BATCH_SIZE)
+trainloader, testloader, num_examples = LoadDataset(CLIENT_ID).select_dataset(DATASET, NUM_CLIENTS, BATCH_SIZE, PARTITIONER)
 
 class CifarClient(fl.client.NumPyClient):
     def get_parameters(self, config):
