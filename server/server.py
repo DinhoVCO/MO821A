@@ -10,6 +10,7 @@ class CustomStrategy(fl.server.strategy.FedAvg):
         super().__init__()
         self.log_file = log_file
         self.round_start_time = 0
+        self.upstream_start_time = 0
         self.upstream_end_time = 0
         self.computation_time = 0
 
@@ -19,6 +20,7 @@ class CustomStrategy(fl.server.strategy.FedAvg):
 
     def configure_fit(self, server_round: int, parameters: Parameters, client_manager: fl.server.client_manager.ClientManager):
         self.round_start_time = time.time()
+        self.upstream_start_time = None  # Reset at the start of each round
         return super().configure_fit(server_round, parameters, client_manager)
     
     def aggregate_fit(
@@ -27,7 +29,9 @@ class CustomStrategy(fl.server.strategy.FedAvg):
         results: List[Tuple[ClientProxy, FitRes]],
         failures: List[BaseException],
     ) -> Tuple[Parameters, Dict[str, Scalar]]:
-        self.computation_start_time = time.time()
+        if self.upstream_start_time is None:
+            self.upstream_start_time = time.time()  # Capture the time when the first client sends parameters
+        #self.computation_start_time = time.time()
         aggregated_params, fit_metrics = super().aggregate_fit(server_round, results, failures)
         self.upstream_end_time = time.time()
 
@@ -54,7 +58,7 @@ class CustomStrategy(fl.server.strategy.FedAvg):
         accuracy_aggregated = sum([res.metrics["accuracy"] for _, res in results]) / len(results)
         f1_aggregated = sum([res.metrics["f1"] for _, res in results]) / len(results)
 
-        communication_time_upstream = self.upstream_end_time - self.computation_start_time
+        communication_time_upstream = self.upstream_end_time - self.upstream_start_time
         communication_time_downstream = self.round_start_time - self.round_start_time
         
         #Log the metrics
