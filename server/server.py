@@ -9,18 +9,16 @@ class CustomStrategy(fl.server.strategy.FedAvg):
     def __init__(self, log_file: str = "metrics.log"):
         super().__init__()
         self.log_file = log_file
-        self.round_start_time = 0
         self.upstream_start_time = 0
         self.upstream_end_time = 0
-        self.computation_time = 0
+        self.computation_start_time = 0
+        self.computation_end_time = 0
 
         #Create the log file and write the header
         with open(self.log_file, "w") as f:
-            f.write("Round, Loss, Accuracy, F1, Computation Time, Communication Time Upstream, Communication Time Downstream\n")
+            f.write("Round, Loss, Accuracy, F1, Computation Time, Communication Time Upstream, Total Time\n")
 
     def configure_fit(self, server_round: int, parameters: Parameters, client_manager: fl.server.client_manager.ClientManager):
-        self.round_start_time = time.time()
-        self.upstream_start_time = None  # Reset at the start of each round
         return super().configure_fit(server_round, parameters, client_manager)
     
     def aggregate_fit(
@@ -29,19 +27,20 @@ class CustomStrategy(fl.server.strategy.FedAvg):
         results: List[Tuple[ClientProxy, FitRes]],
         failures: List[BaseException],
     ) -> Tuple[Parameters, Dict[str, Scalar]]:
-        if self.upstream_start_time is None:
-            self.upstream_start_time = time.time()  # Capture the time when the first client sends parameters
-        #self.computation_start_time = time.time()
-        aggregated_params, fit_metrics = super().aggregate_fit(server_round, results, failures)
         self.upstream_end_time = time.time()
-
-        # Collect computation times from all clients
-        computation_times = [res.metrics["computation_time"] for _, res in results]
-        mean_computation_time = sum(computation_times) / len(computation_times)
-        self.computation_time = mean_computation_time
+        
+        # Collect min start trainin time and max end training time
+        start_times = [res.metrics["start_time"] for _, res in results]
+        end_times = [res.metrics["end_time"] for _, res in results]
+        self.computation_start_time = min(start_times)
+        self.computation_end_time = max(end_times)
+        self.upstream_start_time = self.computation_end_time
 
         # Add mean computation time to fit metrics
-        fit_metrics["mean_computation_time"] = mean_computation_time
+        self.computation_time = self.computation_end_time - self.computation_start_time
+        aggregated_params, fit_metrics = super().aggregate_fit(server_round, results, failures)
+        fit_metrics["computation time"] = self.computation_time
+        
         return aggregated_params, fit_metrics
 
     def aggregate_evaluate(
@@ -58,15 +57,16 @@ class CustomStrategy(fl.server.strategy.FedAvg):
         accuracy_aggregated = sum([res.metrics["accuracy"] for _, res in results]) / len(results)
         f1_aggregated = sum([res.metrics["f1"] for _, res in results]) / len(results)
 
+        #compute communication and total time
         communication_time_upstream = self.upstream_end_time - self.upstream_start_time
-        communication_time_downstream = self.round_start_time - self.round_start_time
-        
+        total_time = self.upstream_end_time - self.computation_start_time
+
         #Log the metrics
         with open(self.log_file, "a") as f:
-            f.write(f"{server_round}, {loss_aggregated}, {accuracy_aggregated}, {f1_aggregated}, {self.computation_time}, {communication_time_upstream}, {communication_time_downstream}\n")
+            f.write(f"{server_round}, {loss_aggregated}, {accuracy_aggregated}, {f1_aggregated}, {self.computation_time}, {communication_time_upstream}, {total_time}\n")
 
         print(f"Round {server_round} - Loss: {loss_aggregated}, Accuracy: {accuracy_aggregated}, F1: {f1_aggregated}")
-        print(f"Computation Time: {self.computation_time}, Communication Time Upstream: {communication_time_upstream}, Communication Time Downstream: {communication_time_downstream}")
+        print(f"Computation Time: {self.computation_time}, Communication Time Upstream: {communication_time_upstream}, Total Time: {total_time}")
         
         return loss_aggregated, {"accuracy": accuracy_aggregated, "f1": f1_aggregated}
 

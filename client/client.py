@@ -105,8 +105,9 @@ class CifarClient(fl.client.NumPyClient):
         self.set_parameters(parameters)
         train(net, trainloader, epochs=1)
         end_time = time.time()
-        computation_time = end_time - start_time
-        return self.get_parameters(config={}), num_examples["trainset"], {"computation_time": computation_time}
+        print(f"STAR TIME:{start_time}, END TIME: {end_time}")
+        return self.get_parameters(config={}), num_examples["trainset"], {"start_time": start_time, "end_time": end_time}
+
 
     def evaluate(self, parameters, config):
         self.set_parameters(parameters)
