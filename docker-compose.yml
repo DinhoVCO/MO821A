@@ -10,7 +10,7 @@ services:
   client-0:
     image: 'fl-client:latest'
     environment:
-      - SERVER_IP=${SERVER_IP}:9999
+      - SERVER_IP=fl_server:9999
       - MODEL=${MODEL}
       - DATASET=${DATASET}
       - CLIENT_ID=0
@@ -24,7 +24,7 @@ services:
   client-1:
     image: 'fl-client:latest'
     environment:
-      - SERVER_IP=${SERVER_IP}:9999
+      - SERVER_IP=fl_server:9999
       - MODEL=${MODEL}
       - DATASET=${DATASET}
       - CLIENT_ID=1
