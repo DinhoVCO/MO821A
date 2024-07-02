@@ -32,9 +32,17 @@ class LoadDataset:
 
         partition = fds.load_partition(self.cid, "train")
         partition = partition.with_transform(apply_transforms)
-        partition = partition.train_test_split(train_size=0.8, seed=42)
-        trainloader = DataLoader(partition["train"], batch_size=batch_size)
-        testloader = DataLoader(partition["test"], batch_size=batch_size)
+
+        # Splitting the partition to only load 10% of the data
+        small_partition = partition.select(range(int(len(partition)*0.1)))
+        small_partition = small_partition.train_test_split(train_size=0.8, seed=42)
+        trainloader = DataLoader(small_partition["train"], batch_size=batch_size)
+        testloader = DataLoader(small_partition["test"], batch_size=batch_size)
+
+        #Using whole data
+        # partition = partition.train_test_split(train_size=0.8, seed=42)
+        # trainloader = DataLoader(partition["train"], batch_size=batch_size)
+        # testloader = DataLoader(partition["test"], batch_size=batch_size)
         num_examples = {"trainset": len(trainloader.dataset), "testset": len(testloader.dataset)}
         
         return trainloader, testloader, num_examples
