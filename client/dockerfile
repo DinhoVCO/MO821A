@@ -1,8 +1,11 @@
 FROM python:3.8-slim
 
-RUN pip install flwr numpy torch torchvision
-
 COPY client.py /app/client.py
+COPY client_requirements.txt .
+COPY models.py /app/models.py
+COPY load_partition.py /app/load_partition.py
+
+RUN pip install -r client_requirements.txt
 
 WORKDIR /app
 
