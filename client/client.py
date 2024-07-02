@@ -10,7 +10,6 @@ from load_partition import LoadDataset
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 NUM_CLIENTS = int(os.environ.get("NUM_CLIENTS", 2))
 CLIENT_ID = int(os.environ.get("CLIENT_ID", 0))
-print(CLIENT_ID)
 MODEL_NAME = os.environ.get("MODEL", "mobilenet_v2")
 BATCH_SIZE = 32
 DATASET = os.environ.get("DATASET", "CIFAR10")
@@ -87,6 +86,6 @@ class CifarClient(fl.client.NumPyClient):
 
 # Inicia el cliente
 if __name__ == "__main__":
-    fl.client.start_client(server_address="127.0.0.1:8080", client=CifarClient().to_client())
-    #fl.client.start_client(server_address=os.environ['SERVER_IP'], client=CifarClient().to_client())
+    #fl.client.start_client(server_address="127.0.0.1:8080", client=CifarClient().to_client())
+    fl.client.start_client(server_address=os.environ['SERVER_IP'], client=CifarClient().to_client())
     #fl.client.start_client(server_address="[::]:8080", client=CifarClient().to_client())

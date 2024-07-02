@@ -3,28 +3,34 @@ services:
     image: ${SERVER_IMAGE}
     container_name: fl_server
     environment:
-      - SERVER_IP=${SERVER_IP}
-      - MODEL=${MODEL}
-      - DATASET=${DATASET}
+      - SERVER_IP=0.0.0.0:9999
     networks:
       - default
 
   client-0:
     image: 'fl-client:latest'
     environment:
-      - SERVER_IP=fl_server:9999
+      - SERVER_IP=${SERVER_IP}:9999
       - MODEL=${MODEL}
       - DATASET=${DATASET}
       - CLIENT_ID=0
+      - NUM_CLIENTS=${NUM_CLIENTS}
+      - LOCAL_EPOCHS=${LOCAL_EPOCHS}
+      - NUM_ROUNDS=${NUM_ROUNDS}
+      - PARTITIONER=${PARTITIONER}
     networks:
       - default
 
   client-1:
     image: 'fl-client:latest'
     environment:
-      - SERVER_IP=fl_server:9999
+      - SERVER_IP=${SERVER_IP}:9999
       - MODEL=${MODEL}
       - DATASET=${DATASET}
       - CLIENT_ID=1
+      - NUM_CLIENTS=${NUM_CLIENTS}
+      - LOCAL_EPOCHS=${LOCAL_EPOCHS}
+      - NUM_ROUNDS=${NUM_ROUNDS}
+      - PARTITIONER=${PARTITIONER}
     networks:
       - default
