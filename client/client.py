@@ -3,6 +3,7 @@ import torch
 import os
 import flwr as fl
 from sklearn.metrics import f1_score
+import time
 
 from models import get_model
 from load_partition import LoadDataset
@@ -10,7 +11,7 @@ from load_partition import LoadDataset
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 NUM_CLIENTS = int(os.environ.get("NUM_CLIENTS", 2))
 CLIENT_ID = int(os.environ.get("CLIENT_ID", 0))
-print(CLIENT_ID)
+#print(CLIENT_ID)
 MODEL_NAME = os.environ.get("MODEL", "mobilenet_v2")
 BATCH_SIZE = 32
 DATASET = os.environ.get("DATASET", "CIFAR10")
@@ -38,7 +39,7 @@ def train(net, trainloader, epochs: int, verbose=False):
         epoch_loss /= len(trainloader.dataset)
         epoch_acc = correct / total
         if verbose:
-            print(f"Epoch {epoch+1}: train loss {epoch_loss}, accuracy {epoch_acc}")
+            print(f"Epoch {epoch+1}: train loss {epoch_loss}, train accuracy {epoch_acc}")
 
 def test(net, testloader):
     """Evaluate the network on the entire test set."""
@@ -75,9 +76,12 @@ class CifarClient(fl.client.NumPyClient):
         net.load_state_dict(state_dict, strict=True)
 
     def fit(self, parameters, config):
+        start_time = time.time()
         self.set_parameters(parameters)
         train(net, trainloader, epochs=1)
-        return self.get_parameters(config={}), num_examples["trainset"], {}
+        end_time = time.time()
+        return self.get_parameters(config={}), num_examples["trainset"], {"start_time": start_time, "end_time": end_time}
+
 
     def evaluate(self, parameters, config):
         self.set_parameters(parameters)
