@@ -3,9 +3,7 @@ services:
     image: ${SERVER_IMAGE}
     container_name: fl_server
     environment:
-      - SERVER_IP=${SERVER_IP}
-      - MODEL=${MODEL}
-      - DATASET=${DATASET}
+      - SERVER_IP=0.0.0.0:9999
     networks:
       - default
 
@@ -16,6 +14,10 @@ services:
       - MODEL=${MODEL}
       - DATASET=${DATASET}
       - CLIENT_ID=0
+      - NUM_CLIENTS=${NUM_CLIENTS}
+      - LOCAL_EPOCHS=${LOCAL_EPOCHS}
+      - NUM_ROUNDS=${NUM_ROUNDS}
+      - PARTITIONER=${PARTITIONER}
     networks:
       - default
 
@@ -26,5 +28,9 @@ services:
       - MODEL=${MODEL}
       - DATASET=${DATASET}
       - CLIENT_ID=1
+      - NUM_CLIENTS=${NUM_CLIENTS}
+      - LOCAL_EPOCHS=${LOCAL_EPOCHS}
+      - NUM_ROUNDS=${NUM_ROUNDS}
+      - PARTITIONER=${PARTITIONER}
     networks:
       - default
