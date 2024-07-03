@@ -19,8 +19,14 @@ parser = argparse.ArgumentParser(description="Flower Server")
 parser.add_argument(
     "--number_of_rounds",
     type=int,
-    default=2,
-    help="Number of FL rounds (default: 2)",
+    default=100,
+    help="Number of FL rounds (default: 10)",
+)
+parser.add_argument(
+    "--patience",
+    type=int,
+    default=50,
+    help="Early stopping patience (default: 10 rounds of no improvement)",
 )
 args = parser.parse_args()
 
@@ -43,5 +49,17 @@ if __name__ == "__main__":
     start_http_server(8000)
 
     # Initialize Strategy Instance and Start FL Server
-    strategy_instance = FedCustom(accuracy_gauge=accuracy_gauge, loss_gauge=loss_gauge, log_file="metrics.log") ## Add log_file
+    strategy_instance = FedCustom(accuracy_gauge=accuracy_gauge, 
+                                  loss_gauge=loss_gauge, 
+                                  log_file="metrics.log", ## Add log_file
+                                  patience=args.patience) ## Add patience
+    
+    # Start the federated learning server
+    # fl.server.start_server(
+    #     server_address="0.0.0.0:8080",
+    #     config=fl.server.ServerConfig(num_rounds=args.number_of_rounds),
+    #     strategy=strategy_instance,
+    # )
+
+    # Start the federated learning server
     start_fl_server(strategy=strategy_instance, rounds=args.number_of_rounds)
