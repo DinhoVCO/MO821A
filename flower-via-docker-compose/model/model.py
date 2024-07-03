@@ -7,7 +7,7 @@ class Model:
         self.learning_rate = learning_rate
         self.loss_function = tf.keras.losses.SparseCategoricalCrossentropy()
         self.model = tf.keras.applications.MobileNetV2(
-            (32, 32, 3), alpha=0.1, classes=10, weights=None
+            (32, 32, 3), alpha=0.9, classes=10, weights=None
         )
         self.optimizer = tf.keras.optimizers.Adam(learning_rate=self.learning_rate)
 
@@ -17,10 +17,10 @@ class Model:
     def get_model(self):
         return self.model
 
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torchvision.models as models
+# import torch
+# import torch.nn as nn
+# import torch.nn.functional as F
+# import torchvision.models as models
 
 #Pytorch
 # class Net1(nn.Module):

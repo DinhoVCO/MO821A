@@ -7,7 +7,7 @@ logging.basicConfig(level=logging.INFO)  # Configure logging
 logger = logging.getLogger(__name__)  # Create logger for the module
 
 
-def load_data(data_sampling_percentage=0.5, client_id=1, total_clients=2, partitioner_type="PARTITIONER"):
+def load_data(data_sampling_percentage=0.8, client_id=1, total_clients=2, partitioner_type="PARTITIONER"):
     """Load federated dataset partition based on client ID.
 
     Args:

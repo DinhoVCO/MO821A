@@ -13,26 +13,31 @@ logger = logging.getLogger(__name__)  # Create logger for the module
 
 class FedCustom(fl.server.strategy.FedAvg):
     def __init__(
-        self, accuracy_gauge: Gauge = None, loss_gauge: Gauge = None, log_file: str = "metrics.log", *args, **kwargs ## Add log_file
+        self,
+        accuracy_gauge: Gauge = None,
+        loss_gauge: Gauge = None, 
+        log_file: str = "metrics.log", 
+        patience: int = 3, ## Add patience for early stopping 
+        *args, **kwargs ## Add log_file
     ):
         super().__init__(*args, **kwargs)
 
         self.accuracy_gauge = accuracy_gauge
         self.loss_gauge = loss_gauge
-        ## Add log_file and times
+        ## Add log_file and early stopping
         self.log_file = log_file
-        self.upstream_start_time = 0
-        self.upstream_end_time = 0
-        self.computation_start_time = 0
-        self.computation_end_time = 0
+        self.patience = patience 
+        self.no_improvement_rounds = 0
+        self.best_loss = float("inf")
+        self.early_stop = False
 
         ## Create the log file and write the header
         with open(self.log_file, "w") as f:
             f.write("Round, Loss, Accuracy, F1, Computation Time, Communication Time Upstream, Total Time\n")
 
     ## configure_fit
-    def configure_fit(self, server_round: int, parameters: Parameters, client_manager: fl.server.client_manager.ClientManager):
-        return super().configure_fit(server_round, parameters, client_manager)
+    # def configure_fit(self, server_round: int, parameters: Parameters, client_manager: fl.server.client_manager.ClientManager):
+    #     return super().configure_fit(server_round, parameters, client_manager)
 
     #def __repr__(self) -> str:
     #    return "FedCustom"
@@ -114,4 +119,39 @@ class FedCustom(fl.server.strategy.FedAvg):
 
         metrics_aggregated = {"loss": loss_aggregated, "accuracy": accuracy_aggregated, "f1": f1_aggregated}
 
+         # Early stopping logic
+        if loss_aggregated < self.best_loss:
+            self.best_loss = loss_aggregated
+            self.no_improvement_rounds = 0
+        else:
+            self.no_improvement_rounds += 1
+            if self.no_improvement_rounds >= self.patience:
+                logger.info(f"Early stopping triggered. No improvement in loss for {self.patience} rounds.")
+                self.early_stop = True
+
         return loss_aggregated, metrics_aggregated
+    
+    def configure_fit(
+        self, 
+        server_round: int, 
+        parameters: Parameters, 
+        client_manager: fl.server.client_manager.ClientManager
+    ) -> List[Tuple[ClientProxy, fl.common.FitIns]]:
+        if self.early_stop:
+            return []
+        else:
+            return super().configure_fit(server_round, parameters, client_manager)
+        
+    def configure_evaluate(
+        self, 
+        server_round: int, 
+        parameters: Parameters, 
+        client_manager: fl.server.client_manager.ClientManager
+    ) -> List[Tuple[ClientProxy, fl.common.EvaluateIns]]:
+        if self.early_stop:
+            return []
+        else:
+            return super().configure_evaluate(server_round, parameters, client_manager)
+
+    def stop_condition(self) -> bool:
+        return self.early_stop
