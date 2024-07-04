@@ -3,19 +3,23 @@ import argparse
 
 parser = argparse.ArgumentParser(description="Generated Docker Compose")
 parser.add_argument(
-    "--total_clients", type=int, default=2, help="Total clients to spawn (default: 2)"
+    "--total_clients", type=int, default=3, help="Total clients to spawn (default: 2)"
 )
 parser.add_argument(
-    "--num_rounds", type=int, default=6, help="Number of FL rounds (default: 10)"
+    "--num_rounds", type=int, default=10, help="Number of FL rounds (default: 10)"
 )
 parser.add_argument(
     "--data_percentage",
     type=float,
-    default=0.5,
+    default=1,
     help="Portion of client data to use (default: 0.6)",
 )
 parser.add_argument(
     "--random", action="store_true", help="Randomize client configurations"
+)
+
+parser.add_argument(
+    "--partitioner_type", type=str, default="DIRICHLET", help="Type of partitioner to use ('PARTITIONER' or 'DIRICHLET')"
 )
 
 
@@ -23,10 +27,10 @@ def create_docker_compose(args):
     # cpus is used to set the number of CPUs available to the container as a fraction of the total number of CPUs on the host machine.
     # mem_limit is used to set the memory limit for the container.
     client_configs = [
-        {"mem_limit": "2g", "batch_size": 32, "cpus": 1, "learning_rate": 0.05},
-        {"mem_limit": "2g", "batch_size": 32, "cpus": 1, "learning_rate": 0.05},
-        {"mem_limit": "2g", "batch_size": 32, "cpus": 1, "learning_rate": 0.05},
-        {"mem_limit": "2g", "batch_size": 32, "cpus": 1, "learning_rate": 0.05},
+        {"mem_limit": "2g", "batch_size": 32, "cpus": 1, "learning_rate": 0.001},
+        {"mem_limit": "2g", "batch_size": 32, "cpus": 1, "learning_rate": 0.001},
+        {"mem_limit": "2g", "batch_size": 32, "cpus": 1, "learning_rate": 0.001},
+        {"mem_limit": "2g", "batch_size": 32, "cpus": 1, "learning_rate": 0.001},
         # Add or modify the configurations depending on your host machine
     ]
 
@@ -117,7 +121,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: python client.py --server_address=server:8080 --data_percentage={args.data_percentage}  --client_id={i} --total_clients={args.total_clients} --batch_size={config["batch_size"]} --learning_rate={config["learning_rate"]}
+    command: python client.py --server_address=server:8080 --data_percentage={args.data_percentage} --partitioner_type={args.partitioner_type}  --client_id={i} --total_clients={args.total_clients} --batch_size={config["batch_size"]} --learning_rate={config["learning_rate"]}
     deploy:
       resources:
         limits:

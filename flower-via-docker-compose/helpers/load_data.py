@@ -1,5 +1,5 @@
 import numpy as np
-#import tensorflow as tf
+import tensorflow as tf
 from flwr_datasets import FederatedDataset
 from flwr_datasets.partitioner import DirichletPartitioner
 import logging
@@ -21,26 +21,22 @@ def load_data(data_sampling_percentage=0.8, client_id=1, total_clients=2, partit
     """
 
     # Download and partition dataset
-    #fds = FederatedDataset(dataset="cifar10", partitioners={"train": total_clients})
-
-    ## Non-IID
     if partitioner_type == "DIRICHLET":
         partitioner = DirichletPartitioner(num_partitions=total_clients, partition_by="label",
                                            alpha=0.5, min_partition_size=10, self_balancing=True)
-        fds = FederatedDataset(dataset="cifar10", partitioners={"train": partitioner})
+        fds = FederatedDataset(dataset="mnist", partitioners={"train": partitioner})
     elif partitioner_type == "PARTITIONER":
-        fds = FederatedDataset(dataset="cifar10", partitioners={"train": total_clients})
+        fds = FederatedDataset(dataset="mnist", partitioners={"train": total_clients})
     else:
         raise ValueError(f"Partitioner {partitioner_type} is not supported.")
-    
 
     partition = fds.load_partition(client_id - 1, "train")
     partition.set_format("numpy")
 
     # Divide data on each client: 80% train, 20% test
     partition = partition.train_test_split(test_size=0.2, seed=42)
-    x_train, y_train = partition["train"]["img"] / 255.0, partition["train"]["label"]
-    x_test, y_test = partition["test"]["img"] / 255.0, partition["test"]["label"]
+    x_train, y_train = partition["train"]["image"] / 255.0, partition["train"]["label"]
+    x_test, y_test = partition["test"]["image"] / 255.0, partition["test"]["label"]
 
     # Apply data sampling
     num_samples = int(data_sampling_percentage * len(x_train))
