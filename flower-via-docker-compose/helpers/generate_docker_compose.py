@@ -3,10 +3,10 @@ import argparse
 
 parser = argparse.ArgumentParser(description="Generated Docker Compose")
 parser.add_argument(
-    "--total_clients", type=int, default=5, help="Total clients to spawn (default: 2)"
+    "--total_clients", type=int, default=2, help="Total clients to spawn (default: 2)"
 )
 parser.add_argument(
-    "--num_rounds", type=int, default=20, help="Number of FL rounds (default: 100)"
+    "--num_rounds", type=int, default=2, help="Number of FL rounds (default: 100)"
 )
 parser.add_argument(
     "--data_percentage",
@@ -17,13 +17,6 @@ parser.add_argument(
 parser.add_argument(
     "--random", action="store_true", help="Randomize client configurations"
 )
-# parser.add_argument(
-#     "--dataset", type=str, default="mnist", help="Dataset to use (MNIST or CIFAR-10)"
-# )
-# ## Non-IID
-# parser.add_argument(
-#     "--partitioner_type", type=str, default="DIRICHLET", help="Type of partitioner to use ('PARTITIONER' or 'DIRICHLET')"
-# )
 
 
 def create_docker_compose(args):
@@ -130,7 +123,7 @@ services:
     container_name: client{i}
     build:
       context: .
-      dockerfile: Dockerfile 
+      dockerfile: Dockerfile
     command: python client.py --server_address=server:8080 --data_percentage={args.data_percentage}  --client_id={i} --total_clients={args.total_clients} --batch_size={config["batch_size"]} --learning_rate={config["learning_rate"]}
     deploy:
       resources:

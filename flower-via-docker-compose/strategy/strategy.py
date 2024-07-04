@@ -5,7 +5,7 @@ from flwr.server.strategy.aggregate import aggregate, weighted_loss_avg
 import flwr as fl
 import logging
 from prometheus_client import Gauge
-import time ##
+import time 
 
 logging.basicConfig(level=logging.INFO)  # Configure logging
 logger = logging.getLogger(__name__)  # Create logger for the module
@@ -16,6 +16,7 @@ class FedCustom(fl.server.strategy.FedAvg):
         self,
         accuracy_gauge: Gauge = None,
         loss_gauge: Gauge = None, 
+        latency_gauge: Gauge = None, 
         log_file: str = "metrics.log", 
         patience: int = 3, ## Add patience for early stopping 
         min_available_clients: int = 5, ## Add min clients to start round
@@ -25,6 +26,7 @@ class FedCustom(fl.server.strategy.FedAvg):
 
         self.accuracy_gauge = accuracy_gauge
         self.loss_gauge = loss_gauge
+        self.latency_gauge = latency_gauge
         ## Add log_file and early stopping
         self.log_file = log_file
         self.patience = patience 
@@ -111,7 +113,8 @@ class FedCustom(fl.server.strategy.FedAvg):
         ## Compute communication and total time
         communication_time_upstream = self.upstream_end_time - self.upstream_start_time
         total_time = self.upstream_end_time - self.computation_start_time
-
+        self.latency_gauge.labels(round=str(server_round)).set(total_time)  # Include round as a label
+       
         ## Log the metrics
         with open(self.log_file, "a") as f:
             f.write(f"{server_round}, {loss_aggregated}, {accuracy_aggregated}, {f1_aggregated}, {self.computation_time}, {communication_time_upstream}, {total_time}\n")
