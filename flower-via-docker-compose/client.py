@@ -4,7 +4,7 @@ import flwr as fl
 import tensorflow as tf
 import logging
 from helpers.load_data import load_data
-#from model.model import Model
+from model.model import Model
 from model.model import Net2
 import time ##
 from sklearn.metrics import f1_score ##
@@ -40,15 +40,14 @@ parser.add_argument(
 # )
 ## Non-IID
 parser.add_argument(
-    "--partitioner_type", type=str, default="PARTITIONER", help="Type of partitioner to use ('PARTITIONER' or 'DIRICHLET')"
+    "--partitioner_type", type=str, default="DIRICHLET", help="Type of partitioner to use ('PARTITIONER' or 'DIRICHLET')"
 )
 
 args = parser.parse_args()
 
 # Create an instance of the model and pass the learning rate as an argument
-#model = Model(learning_rate=args.learning_rate)
-#model = Net1(learning_rate=args.learning_rate)
-model = Net2(learning_rate=args.learning_rate)
+model = Model(learning_rate=args.learning_rate)
+#model = Net2(learning_rate=args.learning_rate)
 # Compile the model
 model.compile()
 
