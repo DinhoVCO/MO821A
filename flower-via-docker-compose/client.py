@@ -36,7 +36,7 @@ parser.add_argument(
 )
 ## Non-IID
 parser.add_argument(
-    "--partitioner_type", type=str, default="DIRICHLET", help="Type of partitioner to use ('PARTITIONER' or 'DIRICHLET')"
+    "--partitioner_type", type=str, default="PARTITIONER", help="Type of partitioner to use ('PARTITIONER' or 'DIRICHLET')"
 )
 
 args = parser.parse_args()
@@ -116,7 +116,8 @@ class Client(fl.client.NumPyClient):
 def start_fl_client():
     try:
         client = Client(args).to_client()
-        fl.client.start_client(server_address="127.0.0.1:8080", client=client)
+        #fl.client.start_client(server_address="127.0.0.1:8080", client=client)
+        fl.client.start_client(server_address=args.server_address, client=client)
     except Exception as e:
         logger.error("Error starting FL client: %s", e)
         return {"status": "error", "message": str(e)}

@@ -14,6 +14,9 @@ accuracy_gauge = Gauge("model_accuracy", "Current accuracy of the global model")
 # Define a gauge to track the global model loss
 loss_gauge = Gauge("model_loss", "Current loss of the global model")
 
+latency_gauge = Gauge("round_latency", "Latency of the current round in seconds", ["round"])
+
+
 # Parse command line arguments
 parser = argparse.ArgumentParser(description="Flower Server")
 parser.add_argument(
@@ -25,7 +28,7 @@ parser.add_argument(
 parser.add_argument(
     "--patience",
     type=int,
-    default=50,
+    default=10,
     help="Early stopping patience (default: 10 rounds of no improvement)",
 )
 args = parser.parse_args()
@@ -51,6 +54,7 @@ if __name__ == "__main__":
     # Initialize Strategy Instance and Start FL Server
     strategy_instance = FedCustom(accuracy_gauge=accuracy_gauge, 
                                   loss_gauge=loss_gauge, 
+                                  latency_gauge=latency_gauge,
                                   log_file="metrics.log", ## Add log_file
                                   patience=args.patience) ## Add patience
     
