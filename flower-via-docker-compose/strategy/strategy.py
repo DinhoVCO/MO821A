@@ -18,6 +18,7 @@ class FedCustom(fl.server.strategy.FedAvg):
         loss_gauge: Gauge = None, 
         log_file: str = "metrics.log", 
         patience: int = 3, ## Add patience for early stopping 
+        min_available_clients: int = 5, ## Add min clients to start round
         *args, **kwargs ## Add log_file
     ):
         super().__init__(*args, **kwargs)
@@ -27,6 +28,7 @@ class FedCustom(fl.server.strategy.FedAvg):
         ## Add log_file and early stopping
         self.log_file = log_file
         self.patience = patience 
+        self.min_available_clients = min_available_clients
         self.no_improvement_rounds = 0
         self.best_loss = float("inf")
         self.early_stop = False
@@ -140,7 +142,11 @@ class FedCustom(fl.server.strategy.FedAvg):
         if self.early_stop:
             return []
         else:
-            return super().configure_fit(server_round, parameters, client_manager)
+            clients = client_manager.sample(
+                num_clients=self.min_available_clients  # Modified this line
+            )
+            return [(client, fl.common.FitIns(parameters, {})) for client in clients]
+            #return super().configure_fit(server_round, parameters, client_manager)
         
     def configure_evaluate(
         self, 
@@ -151,7 +157,11 @@ class FedCustom(fl.server.strategy.FedAvg):
         if self.early_stop:
             return []
         else:
-            return super().configure_evaluate(server_round, parameters, client_manager)
+            clients = client_manager.sample(
+                num_clients=self.min_available_clients  # Modified this line
+            )
+            return [(client, fl.common.EvaluateIns(parameters, {})) for client in clients]
+            #return super().configure_evaluate(server_round, parameters, client_manager)
 
     def stop_condition(self) -> bool:
         return self.early_stop
