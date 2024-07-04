@@ -1,18 +1,72 @@
 import tensorflow as tf
-
+from tensorflow.keras import layers, models
 
 # Class for the model. In this case, we are using the MobileNetV2 model from Keras
-class Model:
+# class Model:
+#     def __init__(self, learning_rate, dataset):
+#         self.learning_rate = learning_rate
+#         self.dataset = dataset
+#         self.loss_function = tf.keras.losses.SparseCategoricalCrossentropy()
+#         if self.dataset == "mnist":
+#             size = (28, 28, 1)
+#         else:
+#             size = (32, 32, 3)
+#         self.model = tf.keras.applications.MobileNetV2(
+#             size, alpha=0.9, classes=10, weights=None
+#         )
+#         self.optimizer = tf.keras.optimizers.Adam(learning_rate=self.learning_rate)
+
+#     def compile(self):
+#         self.model.compile(self.optimizer, self.loss_function, metrics=["accuracy"])
+
+#     def get_model(self):
+#         return self.model
+    
+# Net1
+# class Net1:
+#     def __init__(self, learning_rate):
+#         self.learning_rate = learning_rate
+#         self.loss_function = tf.keras.losses.SparseCategoricalCrossentropy()
+#         self.model = models.Sequential(
+#             [
+#                 layers.Conv2D(32, (3, 3), input_shape=(28, 28, 1), activation="relu"),
+#                 layers.MaxPooling2D(pool_size=(2, 2)),
+#                 layers.Conv2D(64, (5, 5), activation="relu"),
+#                 layers.MaxPooling2D(pool_size=(3, 3)),
+#                 layers.Conv2D(64, (3, 3), activation="relu"),
+#                 layers.Flatten(),
+#                 layers.Dense(64, activation="relu"),
+#                 layers.Dense(10)
+#             ]
+#         )   
+#         self.optimizer = tf.keras.optimizers.Adam(learning_rate=self.learning_rate)
+
+#     def compile(self):
+#         self.model.compile(optimizer=self.optimizer, loss=self.loss_function, metrics=["accuracy"])
+
+#     def get_model(self):
+#         return self.model
+    
+
+class Net2:
     def __init__(self, learning_rate):
         self.learning_rate = learning_rate
         self.loss_function = tf.keras.losses.SparseCategoricalCrossentropy()
-        self.model = tf.keras.applications.MobileNetV2(
-            (32, 32, 3), alpha=0.9, classes=10, weights=None
-        )
+        self.model = models.Sequential(
+            [
+                layers.Conv2D(32, (3, 3), input_shape=(28, 28, 1), activation="relu"),
+                layers.MaxPooling2D(pool_size=(2, 2)),
+                #layers.Conv2D(64, (3, 3), activation="relu"),
+                layers.MaxPooling2D(pool_size=(2, 2)),
+                layers.Flatten(),
+                layers.Dropout(0.5),
+                layers.Dense(10, activation="softmax")
+            ]
+        )   
         self.optimizer = tf.keras.optimizers.Adam(learning_rate=self.learning_rate)
 
     def compile(self):
-        self.model.compile(self.optimizer, self.loss_function, metrics=["accuracy"])
+        self.model.compile(optimizer=self.optimizer, loss=self.loss_function, metrics=["accuracy"])
 
     def get_model(self):
         return self.model
@@ -42,27 +96,6 @@ class Model:
 #         x = self.fc3(x)
 #         return x
 
-
-#TF
-# class Net1(tf.keras.Model):
-#     def __init__(self):
-#         super(Net1, self).__init__()
-#         self.conv1 = tf.keras.layers.Conv2D(6, (5, 5), activation='relu')
-#         self.pool = tf.keras.layers.MaxPooling2D((2, 2))
-#         self.conv2 = tf.keras.layers.Conv2D(16, (5, 5), activation='relu')
-#         self.flatten = tf.keras.layers.Flatten()
-#         self.fc1 = tf.keras.layers.Dense(120, activation='relu')
-#         self.fc2 = tf.keras.layers.Dense(84, activation='relu')
-#         self.fc3 = tf.keras.layers.Dense(10)
-
-#     def call(self, x):
-#         x = self.pool(self.conv1(x))
-#         x = self.pool(self.conv2(x))
-#         x = self.flatten(x)
-#         x = self.fc1(x)
-#         x = self.fc2(x)
-#         x = self.fc3(x)
-#         return x
 
 # def get_model(model_name):
 #     if model_name == "Net1":
