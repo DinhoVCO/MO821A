@@ -4,7 +4,8 @@ import flwr as fl
 import tensorflow as tf
 import logging
 from helpers.load_data import load_data
-from model.model import Model
+#from model.model import Model
+from model.model import Net2
 import time ##
 from sklearn.metrics import f1_score ##
 #from model.model import get_model
@@ -25,15 +26,18 @@ parser.add_argument(
     "--batch_size", type=int, default=32, help="Batch size for training"
 )
 parser.add_argument(
-    "--learning_rate", type=float, default=0.1, help="Learning rate for the optimizer"
+    "--learning_rate", type=float, default=0.01, help="Learning rate for the optimizer"
 )
 parser.add_argument("--client_id", type=int, default=1, help="Unique ID for the client")
 parser.add_argument(
-    "--total_clients", type=int, default=2, help="Total number of clients"
+    "--total_clients", type=int, default=5, help="Total number of clients"
 )
 parser.add_argument(
-    "--data_percentage", type=float, default=0.5, help="Portion of client data to use"
+    "--data_percentage", type=float, default=1, help="Portion of client data to use"
 )
+# parser.add_argument(
+#     "--dataset", type=str, default="mnist", help="Dataset to use (MNIST or CIFAR-10)"
+# )
 ## Non-IID
 parser.add_argument(
     "--partitioner_type", type=str, default="DIRICHLET", help="Type of partitioner to use ('PARTITIONER' or 'DIRICHLET')"
@@ -42,8 +46,9 @@ parser.add_argument(
 args = parser.parse_args()
 
 # Create an instance of the model and pass the learning rate as an argument
-model = Model(learning_rate=args.learning_rate)
-#model = get_model("Net1")
+#model = Model(learning_rate=args.learning_rate)
+#model = Net1(learning_rate=args.learning_rate)
+model = Net2(learning_rate=args.learning_rate)
 # Compile the model
 model.compile()
 
@@ -76,7 +81,7 @@ class Client(fl.client.NumPyClient):
 
         # Train the model
         history = model.get_model().fit(
-            self.x_train, self.y_train, batch_size=self.args.batch_size, epochs = 1
+            self.x_train, self.y_train, batch_size=self.args.batch_size, epochs = 2
         )
 
         end_time = time.time() ## End computation time
@@ -116,8 +121,7 @@ class Client(fl.client.NumPyClient):
 def start_fl_client():
     try:
         client = Client(args).to_client()
-        #fl.client.start_client(server_address="127.0.0.1:8080", client=client)
-        fl.client.start_client(server_address=args.server_address, client=client)
+        fl.client.start_client(server_address=args.server_address, client=client) ## server_address=args.server_address para docker  127.0.0.1:8080 sem docker 172.18.255.255:8080 com raspberries
     except Exception as e:
         logger.error("Error starting FL client: %s", e)
         return {"status": "error", "message": str(e)}

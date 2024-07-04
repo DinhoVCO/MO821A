@@ -22,7 +22,7 @@ parser = argparse.ArgumentParser(description="Flower Server")
 parser.add_argument(
     "--number_of_rounds",
     type=int,
-    default=100,
+    default=20,
     help="Number of FL rounds (default: 10)",
 )
 parser.add_argument(
@@ -56,7 +56,8 @@ if __name__ == "__main__":
                                   loss_gauge=loss_gauge, 
                                   latency_gauge=latency_gauge,
                                   log_file="metrics.log", ## Add log_file
-                                  patience=args.patience) ## Add patience
+                                  patience=args.patience,
+                                  min_available_clients=5 ) ## Add patience
     
     # Start the federated learning server
     # fl.server.start_server(
