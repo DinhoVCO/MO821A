@@ -1,5 +1,5 @@
 import torch
-import torchvision.models as models
+import torchvision.models as tmodels
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -23,8 +23,8 @@ class Net1(nn.Module):
         return x
 
 # Crear instancias de los modelos
-resnet18 = models.resnet18()
-mobilenetv2 = models.mobilenet_v2()
+resnet18 = tmodels.resnet18()
+mobilenetv2 = tmodels.mobilenet_v2()
 net1 = Net1()
 # Función para contar parámetros
 def count_parameters(model):

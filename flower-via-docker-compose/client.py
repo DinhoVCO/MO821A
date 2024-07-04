@@ -40,7 +40,7 @@ parser.add_argument(
 # )
 ## Non-IID
 parser.add_argument(
-    "--partitioner_type", type=str, default="DIRICHLET", help="Type of partitioner to use ('PARTITIONER' or 'DIRICHLET')"
+    "--partitioner_type", type=str, default="PARTITIONER", help="Type of partitioner to use ('PARTITIONER' or 'DIRICHLET')"
 )
 
 args = parser.parse_args()

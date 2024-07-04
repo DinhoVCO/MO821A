@@ -35,6 +35,11 @@ def create_docker_compose(args):
         {"mem_limit": "6g", "batch_size": 32, "cpus": 1, "learning_rate": 0.01},
         {"mem_limit": "6g", "batch_size": 32, "cpus": 1, "learning_rate": 0.01},
         {"mem_limit": "6g", "batch_size": 32, "cpus": 1, "learning_rate": 0.01},
+        {"mem_limit": "6g", "batch_size": 32, "cpus": 1, "learning_rate": 0.01},
+        {"mem_limit": "6g", "batch_size": 32, "cpus": 1, "learning_rate": 0.01},
+        {"mem_limit": "6g", "batch_size": 32, "cpus": 1, "learning_rate": 0.01},
+        {"mem_limit": "6g", "batch_size": 32, "cpus": 1, "learning_rate": 0.01},
+        {"mem_limit": "6g", "batch_size": 32, "cpus": 1, "learning_rate": 0.01},
         # Add or modify the configurations depending on your host machine
     ]
 
