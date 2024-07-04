@@ -31,6 +31,7 @@ class Model:
         self.learning_rate = learning_rate
         self.loss_function = tf.keras.losses.SparseCategoricalCrossentropy()
         self.model = self.build_model()
+        self.optimizer = tf.keras.optimizers.Adam(learning_rate=self.learning_rate)
 
     def build_model(self):
         model = models.Sequential()
