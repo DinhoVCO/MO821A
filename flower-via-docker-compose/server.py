@@ -23,13 +23,13 @@ parser.add_argument(
     "--number_of_rounds",
     type=int,
     default=20,
-    help="Number of FL rounds (default: 10)",
+    help="Number of FL rounds (default: 20)",
 )
 parser.add_argument(
     "--patience",
     type=int,
-    default=10,
-    help="Early stopping patience (default: 10 rounds of no improvement)",
+    default=5,
+    help="Early stopping patience (default: 5 rounds of no improvement)",
 )
 args = parser.parse_args()
 

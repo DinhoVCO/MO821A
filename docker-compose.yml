@@ -77,12 +77,12 @@ services:
     container_name: client1
     build:
       context: .
-      dockerfile: Dockerfile
-    command: python client.py --server_address=server:8080 --data_percentage=1  --client_id=1 --total_clients=4 --batch_size=32 --learning_rate=0.01
+      dockerfile: Dockerfile 
+    command: python client.py --server_address=server:8080 --data_percentage=1  --client_id=1 --total_clients=10 --batch_size=32 --learning_rate=0.01
     deploy:
       resources:
         limits:
-          cpus: "4"
+          cpus: "1"
           memory: "6g"
     volumes:
       - .:/app
@@ -100,12 +100,12 @@ services:
     container_name: client2
     build:
       context: .
-      dockerfile: Dockerfile
-    command: python client.py --server_address=server:8080 --data_percentage=1  --client_id=2 --total_clients=4 --batch_size=32 --learning_rate=0.01
+      dockerfile: Dockerfile 
+    command: python client.py --server_address=server:8080 --data_percentage=1  --client_id=2 --total_clients=10 --batch_size=32 --learning_rate=0.01
     deploy:
       resources:
         limits:
-          cpus: "4"
+          cpus: "1"
           memory: "6g"
     volumes:
       - .:/app
@@ -123,12 +123,12 @@ services:
     container_name: client3
     build:
       context: .
-      dockerfile: Dockerfile
-    command: python client.py --server_address=server:8080 --data_percentage=1  --client_id=3 --total_clients=4 --batch_size=32 --learning_rate=0.01
+      dockerfile: Dockerfile 
+    command: python client.py --server_address=server:8080 --data_percentage=1  --client_id=3 --total_clients=10 --batch_size=32 --learning_rate=0.01
     deploy:
       resources:
         limits:
-          cpus: "4"
+          cpus: "1"
           memory: "6g"
     volumes:
       - .:/app
@@ -146,12 +146,12 @@ services:
     container_name: client4
     build:
       context: .
-      dockerfile: Dockerfile
-    command: python client.py --server_address=server:8080 --data_percentage=1  --client_id=4 --total_clients=4 --batch_size=32 --learning_rate=0.01
+      dockerfile: Dockerfile 
+    command: python client.py --server_address=server:8080 --data_percentage=1  --client_id=4 --total_clients=10 --batch_size=32 --learning_rate=0.01
     deploy:
       resources:
         limits:
-          cpus: "4"
+          cpus: "1"
           memory: "6g"
     volumes:
       - .:/app
@@ -163,6 +163,144 @@ services:
     environment:
       FLASK_RUN_PORT: 6004
       container_name: client4
+      DOCKER_HOST_IP: host.docker.internal
+
+  client5:
+    container_name: client5
+    build:
+      context: .
+      dockerfile: Dockerfile 
+    command: python client.py --server_address=server:8080 --data_percentage=1  --client_id=5 --total_clients=10 --batch_size=32 --learning_rate=0.01
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: "6g"
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "6005:6005"
+    depends_on:
+      - server
+    environment:
+      FLASK_RUN_PORT: 6005
+      container_name: client5
+      DOCKER_HOST_IP: host.docker.internal
+
+  client6:
+    container_name: client6
+    build:
+      context: .
+      dockerfile: Dockerfile 
+    command: python client.py --server_address=server:8080 --data_percentage=1  --client_id=6 --total_clients=10 --batch_size=32 --learning_rate=0.01
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: "6g"
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "6006:6006"
+    depends_on:
+      - server
+    environment:
+      FLASK_RUN_PORT: 6006
+      container_name: client6
+      DOCKER_HOST_IP: host.docker.internal
+
+  client7:
+    container_name: client7
+    build:
+      context: .
+      dockerfile: Dockerfile 
+    command: python client.py --server_address=server:8080 --data_percentage=1  --client_id=7 --total_clients=10 --batch_size=32 --learning_rate=0.01
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: "6g"
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "6007:6007"
+    depends_on:
+      - server
+    environment:
+      FLASK_RUN_PORT: 6007
+      container_name: client7
+      DOCKER_HOST_IP: host.docker.internal
+
+  client8:
+    container_name: client8
+    build:
+      context: .
+      dockerfile: Dockerfile 
+    command: python client.py --server_address=server:8080 --data_percentage=1  --client_id=8 --total_clients=10 --batch_size=32 --learning_rate=0.01
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: "6g"
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "6008:6008"
+    depends_on:
+      - server
+    environment:
+      FLASK_RUN_PORT: 6008
+      container_name: client8
+      DOCKER_HOST_IP: host.docker.internal
+
+  client9:
+    container_name: client9
+    build:
+      context: .
+      dockerfile: Dockerfile 
+    command: python client.py --server_address=server:8080 --data_percentage=1  --client_id=9 --total_clients=10 --batch_size=32 --learning_rate=0.01
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: "6g"
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "6009:6009"
+    depends_on:
+      - server
+    environment:
+      FLASK_RUN_PORT: 6009
+      container_name: client9
+      DOCKER_HOST_IP: host.docker.internal
+
+  client10:
+    container_name: client10
+    build:
+      context: .
+      dockerfile: Dockerfile 
+    command: python client.py --server_address=server:8080 --data_percentage=1  --client_id=10 --total_clients=10 --batch_size=32 --learning_rate=0.01
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: "6g"
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "6010:6010"
+    depends_on:
+      - server
+    environment:
+      FLASK_RUN_PORT: 6010
+      container_name: client10
       DOCKER_HOST_IP: host.docker.internal
 volumes:
   grafana-storage:

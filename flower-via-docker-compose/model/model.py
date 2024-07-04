@@ -1,6 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras import layers, models
-
+   
+#MNIST
 class Net2:
     def __init__(self, learning_rate):
         self.learning_rate = learning_rate
@@ -9,7 +10,6 @@ class Net2:
             [
                 layers.Conv2D(32, (3, 3), input_shape=(28, 28, 1), activation="relu"),
                 layers.MaxPooling2D(pool_size=(2, 2)),
-                #layers.Conv2D(64, (3, 3), activation="relu"),
                 layers.MaxPooling2D(pool_size=(2, 2)),
                 layers.Flatten(),
                 layers.Dropout(0.5),
