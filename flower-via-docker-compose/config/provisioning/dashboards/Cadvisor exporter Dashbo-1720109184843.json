@@ -20,7 +20,6 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 14282,
   "graphTooltip": 0,
-  "id": 3,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -105,7 +104,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "accu"
+                "value": "Accuracy"
               }
             ]
           }
@@ -1122,7 +1121,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "#EAB839",
@@ -1250,7 +1250,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "dark-blue"
+                "color": "dark-blue",
+                "value": null
               },
               {
                 "color": "#EAB839",
@@ -1343,6 +1344,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
+            "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -1376,7 +1378,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "#EAB839",
@@ -1502,7 +1505,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "dark-blue"
+                "color": "dark-blue",
+                "value": null
               },
               {
                 "color": "#EAB839",
@@ -1529,6 +1533,30 @@
               {
                 "id": "displayName",
                 "value": "Bytes transmitted"
+              }
+            ]
+          },
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "Bytes transmitted"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
               }
             ]
           }
@@ -1592,6 +1620,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
+            "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -1627,7 +1656,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "dark-blue"
+                "color": "dark-blue",
+                "value": null
               },
               {
                 "color": "#EAB839",
@@ -1646,7 +1676,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Bits transmitidos por el servidor"
+                "value": "Bytes transmitted by the server"
               },
               {
                 "id": "color",
@@ -1672,7 +1702,7 @@
               },
               {
                 "id": "displayName",
-                "value": "Bytes recibidos por los clientes"
+                "value": "Bytes received by all clients"
               }
             ]
           }
@@ -1735,7 +1765,7 @@
           "useBackend": false
         }
       ],
-      "title": "Server",
+      "title": "SERVER - CLIENT (transmitted -received)",
       "transparent": true,
       "type": "timeseries"
     },
@@ -1790,7 +1820,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "dark-blue"
+                "color": "dark-blue",
+                "value": null
               },
               {
                 "color": "#EAB839",
@@ -1809,7 +1840,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Bits transmitidos por los clientes"
+                "value": "Bytes transmitted by clients"
               },
               {
                 "id": "color",
@@ -1835,7 +1866,7 @@
               },
               {
                 "id": "displayName",
-                "value": "Bytes recibidos por el server"
+                "value": "bytes received by the server"
               }
             ]
           }
@@ -1898,7 +1929,7 @@
           "useBackend": false
         }
       ],
-      "title": "Server",
+      "title": "CLIENT - SERVER (transmitted - received)",
       "transparent": true,
       "type": "timeseries"
     },
@@ -1917,6 +1948,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
+            "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -1952,7 +1984,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "dark-blue"
+                "color": "dark-blue",
+                "value": null
               },
               {
                 "color": "#EAB839",
@@ -1970,7 +2003,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "total de pauqtes recibidos"
+                "value": "Packets received"
               },
               {
                 "id": "color",
@@ -1996,7 +2029,7 @@
               },
               {
                 "id": "displayName",
-                "value": "paquetes recividos dropped"
+                "value": "Packets not received"
               }
             ]
           }
@@ -2059,7 +2092,7 @@
           "useBackend": false
         }
       ],
-      "title": "Recived",
+      "title": "PACKAGES RECEIVED",
       "transparent": true,
       "type": "timeseries"
     },
@@ -2114,7 +2147,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "dark-blue"
+                "color": "dark-blue",
+                "value": null
               },
               {
                 "color": "#EAB839",
@@ -2132,7 +2166,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "total de pauqtes transmitidos"
+                "value": "Packets transmitted successfully"
               },
               {
                 "id": "color",
@@ -2158,7 +2192,7 @@
               },
               {
                 "id": "displayName",
-                "value": "paquetes transmitidos dropped"
+                "value": "Packets not transmitted"
               }
             ]
           }
@@ -2221,9 +2255,160 @@
           "useBackend": false
         }
       ],
-      "title": "Transmitted",
+      "title": "TRANSMITTED PACKETS",
       "transparent": true,
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "db69454e-e558-479e-b4fc-80db52bf91da"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 67
+      },
+      "id": 33,
+      "options": {
+        "displayMode": "basic",
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "max"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "11.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "db69454e-e558-479e-b4fc-80db52bf91da"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "avg by(round) (round_latency)",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "LATENCY PER ROUND",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "db69454e-e558-479e-b4fc-80db52bf91da"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 67
+      },
+      "id": 34,
+      "options": {
+        "displayMode": "lcd",
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "max"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "11.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "db69454e-e558-479e-b4fc-80db52bf91da"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "avg by(round) (round_latency)",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "LATENCY PER ROUND",
+      "type": "bargauge"
     },
     {
       "collapsed": false,
@@ -2235,7 +2420,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 67
+        "y": 75
       },
       "id": 19,
       "panels": [],
@@ -2271,7 +2456,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2328,7 +2514,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 68
+        "y": 76
       },
       "id": 17,
       "options": {
@@ -2467,8 +2653,8 @@
     ]
   },
   "time": {
-    "from": "now-5m",
-    "to": "now"
+    "from": "2024-07-04T19:33:58.387Z",
+    "to": "2024-07-04T19:41:14.988Z"
   },
   "timepicker": {},
   "timezone": "",
