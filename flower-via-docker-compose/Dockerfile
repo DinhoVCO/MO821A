@@ -7,7 +7,6 @@ WORKDIR /app
 
 # Copy the requirements file into the container
 COPY ./requirements.txt /app/requirements.txt
-COPY ./constraints.txt /app/constraints.txt
 
 # Install gcc and other dependencies
 RUN apt-get update && apt-get install -y \
@@ -16,6 +15,6 @@ RUN apt-get update && apt-get install -y \
     rm -rf /var/lib/apt/lists/*
 
 # Install any needed packages specified in requirements.txt
-RUN pip install -r requirements.txt -c constraints.txt
+RUN pip install -r requirements.txt
 
 

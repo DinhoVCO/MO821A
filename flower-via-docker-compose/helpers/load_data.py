@@ -1,10 +1,9 @@
 import numpy as np
-import tensorflow as tf
+#import tensorflow as tf
 from flwr_datasets import FederatedDataset
 from flwr_datasets.partitioner import DirichletPartitioner
 import logging
-from flwr_datasets.partitioner import DirichletPartitioner
-import keras
+#import keras
 
 logging.basicConfig(level=logging.INFO)  # Configure logging
 logger = logging.getLogger(__name__)  # Create logger for the module
