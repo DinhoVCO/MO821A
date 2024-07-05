@@ -57,7 +57,7 @@ if __name__ == "__main__":
                                   latency_gauge=latency_gauge,
                                   log_file="metrics.log", ## Add log_file
                                   patience=args.patience,
-                                  min_available_clients=15) ## Add patience
+                                  min_available_clients=10) ## Add patience
     
     # Start the federated learning server
     # fl.server.start_server(

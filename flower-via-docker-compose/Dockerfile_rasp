@@ -1,0 +1,35 @@
+# Use an official Python runtime as a parent image
+FROM arm64v8/python:3.10-slim-buster
+
+# Set the working directory in the container to /app
+WORKDIR /app
+
+# Copy the requirements file into the container
+COPY ./requirements.txt /app/requirements.txt
+
+# Install gcc, g++, and other dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    python3-dev \
+    libhdf5-dev \
+    libhdf5-serial-dev \
+    hdf5-tools \
+    libblas-dev \
+    liblapack-dev \
+    libatlas-base-dev \
+    build-essential \
+    cython \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install h5py separately
+RUN pip install h5py
+
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the application code
+COPY . /app
+
+# Command to run the application
+CMD ["python", "server.py"]
