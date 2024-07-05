@@ -3,7 +3,7 @@ import argparse
 
 parser = argparse.ArgumentParser(description="Generated Docker Compose")
 parser.add_argument(
-    "--total_clients", type=int, default=5, help="Total clients to spawn (default: 2)"
+    "--total_clients", type=int, default=15, help="Total clients to spawn (default: 2)"
 )
 parser.add_argument(
     "--num_rounds", type=int, default=20, help="Number of FL rounds (default: 100)"
