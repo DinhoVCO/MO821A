@@ -6,7 +6,7 @@ parser.add_argument(
     "--total_clients", type=int, default=10, help="Total clients to spawn (default: 2)"
 )
 parser.add_argument(
-    "--num_rounds", type=int, default=10, help="Number of FL rounds (default: 100)"
+    "--num_rounds", type=int, default=20, help="Number of FL rounds (default: 100)"
 )
 parser.add_argument(
     "--data_percentage",
@@ -23,6 +23,11 @@ def create_docker_compose(args):
     # cpus is used to set the number of CPUs available to the container as a fraction of the total number of CPUs on the host machine.
     # mem_limit is used to set the memory limit for the container.
     client_configs = [
+        {"mem_limit": "6g", "batch_size": 32, "cpus": 1, "learning_rate": 0.01},
+        {"mem_limit": "6g", "batch_size": 32, "cpus": 1, "learning_rate": 0.01},
+        {"mem_limit": "6g", "batch_size": 32, "cpus": 1, "learning_rate": 0.01},
+        {"mem_limit": "6g", "batch_size": 32, "cpus": 1, "learning_rate": 0.01},
+        {"mem_limit": "6g", "batch_size": 32, "cpus": 1, "learning_rate": 0.01},
         {"mem_limit": "6g", "batch_size": 32, "cpus": 1, "learning_rate": 0.01},
         {"mem_limit": "6g", "batch_size": 32, "cpus": 1, "learning_rate": 0.01},
         {"mem_limit": "6g", "batch_size": 32, "cpus": 1, "learning_rate": 0.01},
@@ -92,10 +97,8 @@ services:
 
 
   server:
+    image: 'g198603/mo821:server'
     container_name: server
-    build:
-      context: .
-      dockerfile: Dockerfile
     command: python server.py --number_of_rounds={args.num_rounds}
     environment:
       FLASK_RUN_PORT: 6000
@@ -110,26 +113,31 @@ services:
     depends_on:
       - prometheus
       - grafana
+    deploy:
+      placement:
+        constraints:
+          - node.role==manager
 """
     ####### COLOCAR IP DA MAQUINA NO CLIENTE ABAIXO EM command: --server_address=172.18.255.255:8080
     # Add client services
-    for i in range(1, args.total_clients + 1):
+    for i in range(1, 6):
         if args.random:
             config = random.choice(client_configs)
         else:
             config = client_configs[(i - 1) % len(client_configs)]
         docker_compose_content += f"""
   client{i}:
+    image: 'g198603/mo821:rasp-fl'
     container_name: client{i}
-    build:
-      context: .
-      dockerfile: Dockerfile
     command: python client.py --server_address=server:8080 --data_percentage={args.data_percentage}  --client_id={i} --total_clients={args.total_clients} --batch_size={config["batch_size"]} --learning_rate={config["learning_rate"]}
     deploy:
       resources:
         limits:
           cpus: "{(config['cpus'])}"
           memory: "{config['mem_limit']}"
+      placement:
+        constraints:
+          - node.role==worker
     volumes:
       - .:/app
       - /var/run/docker.sock:/var/run/docker.sock
@@ -140,12 +148,41 @@ services:
     environment:
       FLASK_RUN_PORT: {6000 + i}
       container_name: client{i}
-      DOCKER_HOST_IP: host.docker.internal
+"""
+        
+    for i in range(6, 11):
+        if args.random:
+            config = random.choice(client_configs)
+        else:
+            config = client_configs[(i - 1) % len(client_configs)]
+        docker_compose_content += f"""
+  client{i}:
+    image: 'g198603/mo821:intel-fl'
+    container_name: client{i}
+    command: python client.py --server_address=server:8080 --data_percentage={args.data_percentage}  --client_id={i} --total_clients={args.total_clients} --batch_size={config["batch_size"]} --learning_rate={config["learning_rate"]}
+    deploy:
+      resources:
+        limits:
+          cpus: "{(config['cpus'])}"
+          memory: "{config['mem_limit']}"
+      placement:
+        constraints:
+          - node.role==worker
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "{6000 + i}:{6000 + i}"
+    depends_on:
+      - server
+    environment:
+      FLASK_RUN_PORT: {6000 + i}
+      container_name: client{i}
 """
 
     docker_compose_content += "volumes:\n  grafana-storage:\n"
 
-    with open("docker-compose.yml", "w") as file:
+    with open("docker-compose-swarm.yml", "w") as file:
         file.write(docker_compose_content)
 
 
