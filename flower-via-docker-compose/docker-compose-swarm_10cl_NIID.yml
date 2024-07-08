@@ -54,7 +54,7 @@ services:
 
 
   server:
-    image: 'g198603/mo821:server'
+    image: 'g198603/mo821:server_10cl_NIID'
     container_name: server
     command: python server.py --number_of_rounds=20
     environment:
@@ -76,7 +76,7 @@ services:
           - node.role==manager
 
   client1:
-    image: 'g198603/mo821:rasp-fl'
+    image: 'g198603/mo821:rasp-fl_10cl_NIID'
     container_name: client1
     command: python client.py --server_address=server:8080 --data_percentage=1  --client_id=1 --total_clients=10 --batch_size=32 --learning_rate=0.01
     deploy:
@@ -99,7 +99,7 @@ services:
       container_name: client1
 
   client2:
-    image: 'g198603/mo821:rasp-fl'
+    image: 'g198603/mo821:rasp-fl_10cl_NIID'
     container_name: client2
     command: python client.py --server_address=server:8080 --data_percentage=1  --client_id=2 --total_clients=10 --batch_size=32 --learning_rate=0.01
     deploy:
@@ -122,7 +122,7 @@ services:
       container_name: client2
 
   client3:
-    image: 'g198603/mo821:rasp-fl'
+    image: 'g198603/mo821:rasp-fl_10cl_NIID'
     container_name: client3
     command: python client.py --server_address=server:8080 --data_percentage=1  --client_id=3 --total_clients=10 --batch_size=32 --learning_rate=0.01
     deploy:
@@ -145,7 +145,7 @@ services:
       container_name: client3
 
   client4:
-    image: 'g198603/mo821:rasp-fl'
+    image: 'g198603/mo821:rasp-fl_10cl_NIID'
     container_name: client4
     command: python client.py --server_address=server:8080 --data_percentage=1  --client_id=4 --total_clients=10 --batch_size=32 --learning_rate=0.01
     deploy:
@@ -168,7 +168,7 @@ services:
       container_name: client4
 
   client5:
-    image: 'g198603/mo821:rasp-fl'
+    image: 'g198603/mo821:rasp-fl_10cl_NIID'
     container_name: client5
     command: python client.py --server_address=server:8080 --data_percentage=1  --client_id=5 --total_clients=10 --batch_size=32 --learning_rate=0.01
     deploy:
@@ -191,7 +191,7 @@ services:
       container_name: client5
 
   client6:
-    image: 'g198603/mo821:intel-fl'
+    image: 'g198603/mo821:intel-fl_10cl_NIID'
     container_name: client6
     command: python client.py --server_address=server:8080 --data_percentage=1  --client_id=6 --total_clients=10 --batch_size=32 --learning_rate=0.01
     deploy:
@@ -214,7 +214,7 @@ services:
       container_name: client6
 
   client7:
-    image: 'g198603/mo821:intel-fl'
+    image: 'g198603/mo821:intel-fl_10cl_NIID'
     container_name: client7
     command: python client.py --server_address=server:8080 --data_percentage=1  --client_id=7 --total_clients=10 --batch_size=32 --learning_rate=0.01
     deploy:
@@ -237,7 +237,7 @@ services:
       container_name: client7
 
   client8:
-    image: 'g198603/mo821:intel-fl'
+    image: 'g198603/mo821:intel-fl_10cl_NIID'
     container_name: client8
     command: python client.py --server_address=server:8080 --data_percentage=1  --client_id=8 --total_clients=10 --batch_size=32 --learning_rate=0.01
     deploy:
@@ -260,7 +260,7 @@ services:
       container_name: client8
 
   client9:
-    image: 'g198603/mo821:intel-fl'
+    image: 'g198603/mo821:intel-fl_10cl_NIID'
     container_name: client9
     command: python client.py --server_address=server:8080 --data_percentage=1  --client_id=9 --total_clients=10 --batch_size=32 --learning_rate=0.01
     deploy:
@@ -283,7 +283,7 @@ services:
       container_name: client9
 
   client10:
-    image: 'g198603/mo821:intel-fl'
+    image: 'g198603/mo821:intel-fl_10cl_NIID'
     container_name: client10
     command: python client.py --server_address=server:8080 --data_percentage=1  --client_id=10 --total_clients=10 --batch_size=32 --learning_rate=0.01
     deploy:

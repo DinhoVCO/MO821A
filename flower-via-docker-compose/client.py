@@ -247,7 +247,7 @@ class Client(fl.client.NumPyClient):
 def start_fl_client():
     try:
         client = Client(args).to_client()
-        fl.client.start_client(server_address="127.0.0.1:8080", client=client) ## server_address=args.server_address para docker  127.0.0.1:8080 sem docker 172.18.255.255:8080 com raspberries
+        fl.client.start_client(server_address=args.server_address, client=client) ## server_address=args.server_address para docker  127.0.0.1:8080 sem docker 172.18.255.255:8080 com raspberries
     except Exception as e:
         logger.error("Error starting FL client: %s", e)
         return {"status": "error", "message": str(e)}

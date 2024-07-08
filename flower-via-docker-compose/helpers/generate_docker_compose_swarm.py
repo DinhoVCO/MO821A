@@ -3,7 +3,7 @@ import argparse
 
 parser = argparse.ArgumentParser(description="Generated Docker Compose")
 parser.add_argument(
-    "--total_clients", type=int, default=10, help="Total clients to spawn (default: 2)"
+    "--total_clients", type=int, default=15, help="Total clients to spawn (default: 2)"
 )
 parser.add_argument(
     "--num_rounds", type=int, default=20, help="Number of FL rounds (default: 100)"
@@ -97,7 +97,7 @@ services:
 
 
   server:
-    image: 'g198603/mo821:server'
+    image: 'g198603/mo821:server_15cl_NIID'
     container_name: server
     command: python server.py --number_of_rounds={args.num_rounds}
     environment:
@@ -120,14 +120,14 @@ services:
 """
     ####### COLOCAR IP DA MAQUINA NO CLIENTE ABAIXO EM command: --server_address=172.18.255.255:8080
     # Add client services
-    for i in range(1, 6):
+    for i in range(1, 11):
         if args.random:
             config = random.choice(client_configs)
         else:
             config = client_configs[(i - 1) % len(client_configs)]
         docker_compose_content += f"""
   client{i}:
-    image: 'g198603/mo821:rasp-fl'
+    image: 'g198603/mo821:rasp-fl_15cl_NIID'
     container_name: client{i}
     command: python client.py --server_address=server:8080 --data_percentage={args.data_percentage}  --client_id={i} --total_clients={args.total_clients} --batch_size={config["batch_size"]} --learning_rate={config["learning_rate"]}
     deploy:
@@ -150,14 +150,14 @@ services:
       container_name: client{i}
 """
         
-    for i in range(6, 11):
+    for i in range(11, 16):
         if args.random:
             config = random.choice(client_configs)
         else:
             config = client_configs[(i - 1) % len(client_configs)]
         docker_compose_content += f"""
   client{i}:
-    image: 'g198603/mo821:intel-fl'
+    image: 'g198603/mo821:intel-fl_15cl_NIID'
     container_name: client{i}
     command: python client.py --server_address=server:8080 --data_percentage={args.data_percentage}  --client_id={i} --total_clients={args.total_clients} --batch_size={config["batch_size"]} --learning_rate={config["learning_rate"]}
     deploy:
