@@ -47,7 +47,7 @@ def load_data(data_sampling_percentage=0.8, client_id=1, total_clients=2, partit
     num_samples = int(data_sampling_percentage * len(x_train))
     indices = np.random.choice(len(x_train), num_samples, replace=False)
     x_train, y_train = x_train[indices], y_train[indices]
-    x_train = np.expand_dims(x_train, -1)
-    x_test = np.expand_dims(x_test, -1)
+    # x_train = np.expand_dims(x_train, -1)
+    # x_test = np.expand_dims(x_test, -1)
 
     return (x_train, y_train), (x_test, y_test)

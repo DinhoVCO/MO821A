@@ -5,7 +5,7 @@ import flwr as fl
 import torch
 import torch.nn as nn
 import torch.optim as optim
-#from torch.utils.data import DataLoader, random_split
+from torch.utils.data import DataLoader, random_split
 import logging
 from helpers.load_data import load_data
 from model.model import Model
@@ -60,7 +60,7 @@ class Client(fl.client.NumPyClient):
         self.args = args
 
         logger.info("Preparing data...")
-        #self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         (x_train, y_train), (x_test, y_test) = load_data(
             data_sampling_percentage=self.args.data_percentage,
             client_id=self.args.client_id,
@@ -73,51 +73,67 @@ class Client(fl.client.NumPyClient):
         # self.x_test = x_test
         # self.y_test = y_test
 
-        self.x_train = torch.tensor(x_train, dtype=torch.float32)
-        self.y_train = torch.tensor(y_train, dtype=torch.long)
-        self.x_test = torch.tensor(x_test, dtype=torch.float32)
-        self.y_test = torch.tensor(y_test, dtype=torch.long)
+        # self.x_train = torch.tensor(x_train, dtype=torch.float32)
+        # self.y_train = torch.tensor(y_train, dtype=torch.long)
+        # self.x_test = torch.tensor(x_test, dtype=torch.float32)
+        # self.y_test = torch.tensor(y_test, dtype=torch.long)
 
-        # self.x_train = torch.tensor(x_train, dtype=torch.float32).unsqueeze(1).to(self.device)
-        # self.y_train = torch.tensor(y_train, dtype=torch.long).to(self.device)
-        # self.x_test = torch.tensor(x_test, dtype=torch.float32).unsqueeze(1).to(self.device)
-        # self.y_test = torch.tensor(y_test, dtype=torch.long).to(self.device)
+        self.x_train = torch.tensor(x_train, dtype=torch.float32).unsqueeze(1).to(self.device)
+        self.y_train = torch.tensor(y_train, dtype=torch.long).to(self.device)
+        self.x_test = torch.tensor(x_test, dtype=torch.float32).unsqueeze(1).to(self.device)
+        self.y_test = torch.tensor(y_test, dtype=torch.long).to(self.device)
 
-        # self.train_loader = DataLoader(list(zip(self.x_train, self.y_train)), batch_size=self.args.batch_size, shuffle=True)
-        # self.test_loader = DataLoader(list(zip(self.x_test, self.y_test)), batch_size=self.args.batch_size, shuffle=False)
-        # self.model = model.to(self.device)
+        self.train_loader = DataLoader(list(zip(self.x_train, self.y_train)), batch_size=self.args.batch_size, shuffle=True)
+        self.test_loader = DataLoader(list(zip(self.x_test, self.y_test)), batch_size=self.args.batch_size, shuffle=False)
+        self.model = model.to(self.device)
 
     def get_parameters(self, config):
         # Return the parameters of the model
         #return model.get_model().get_weights()
-        return [val.cpu().numpy() for val in model.get_model().state_dict().values()]
+        #return [val.cpu().numpy() for val in model.get_model().state_dict().values()]
+        return [val.detach().cpu().numpy() for val in self.model.parameters()]
 
     def fit(self, parameters, config):
         start_time = time.time() ## Start computation time
         # Set the weights of the model
         #model.get_model().set_weights(parameters)
-        params_dict = zip(model.get_model().state_dict().keys(), parameters)
-        state_dict = {k: torch.tensor(v) for k, v in params_dict}
-        model.get_model().load_state_dict(state_dict, strict=True)
+
+        # params_dict = zip(model.get_model().state_dict().keys(), parameters)
+        # state_dict = {k: torch.tensor(v) for k, v in params_dict}
+        # model.get_model().load_state_dict(state_dict, strict=True)
 
         # Train the model
         # history = model.get_model().fit(
         #     self.x_train, self.y_train, batch_size=self.args.batch_size, epochs = 2
         # )
-        model.get_model().train()
-        train_loader = torch.utils.data.DataLoader(
-            list(zip(self.x_train, self.y_train)), batch_size=self.args.batch_size, shuffle=True
-        )
-        criterion = nn.CrossEntropyLoss()
-        optimizer = optim.Adam(model.get_model().parameters(), lr=self.args.learning_rate)
+        # model.get_model().train()
+        # train_loader = torch.utils.data.DataLoader(
+        #     list(zip(self.x_train, self.y_train)), batch_size=self.args.batch_size, shuffle=True
+        # )
+        # criterion = nn.CrossEntropyLoss()
+        # optimizer = optim.Adam(model.get_model().parameters(), lr=self.args.learning_rate)
 
-        for epoch in range(2):  # number of epochs can be adjusted
-            for x_batch, y_batch in train_loader:
+        # for epoch in range(2):  # number of epochs can be adjusted
+        #     for x_batch, y_batch in train_loader:
+        #         optimizer.zero_grad()
+        #         outputs = model.get_model()(x_batch)
+        #         loss = criterion(outputs, y_batch)
+        #         loss.backward()
+        #         optimizer.step()
+
+        self.model.train()
+        self.model.set_parameters(parameters)
+        criterion = nn.CrossEntropyLoss()
+        optimizer = optim.Adam(self.model.parameters(), lr=self.args.learning_rate)
+
+        for epoch in range(2):  # Train for 2 epochs
+            for x_batch, y_batch in self.train_loader:
                 optimizer.zero_grad()
-                outputs = model.get_model()(x_batch)
+                outputs = self.model(x_batch)
                 loss = criterion(outputs, y_batch)
                 loss.backward()
                 optimizer.step()
+
 
         end_time = time.time() ## End computation time
 
@@ -131,7 +147,8 @@ class Client(fl.client.NumPyClient):
 
         # Get the parameters after training
         #parameters_prime = model.get_model().get_weights()
-        parameters_prime = [val.cpu().numpy() for val in model.get_model().state_dict().values()]
+        #parameters_prime = [val.cpu().numpy() for val in model.get_model().state_dict().values()]
+        parameters_prime = self.get_parameters(config)
 
         # Directly return the parameters and the number of examples trained on
         return parameters_prime, len(self.x_train), results
@@ -139,31 +156,48 @@ class Client(fl.client.NumPyClient):
     def evaluate(self, parameters, config):
         # Set the weights of the model
         #model.get_model().set_weights(parameters)
-        params_dict = zip(model.get_model().state_dict().keys(), parameters)
-        state_dict = {k: torch.tensor(v) for k, v in params_dict}
-        model.get_model().load_state_dict(state_dict, strict=True)
+        # params_dict = zip(model.get_model().state_dict().keys(), parameters)
+        # state_dict = {k: torch.tensor(v) for k, v in params_dict}
+        # model.get_model().load_state_dict(state_dict, strict=True)
 
-        # Evaluate the model and get the loss and accuracy
-        # loss, accuracy = model.get_model().evaluate(
-        #     self.x_test, self.y_test, batch_size=self.args.batch_size
+        # # Evaluate the model and get the loss and accuracy
+        # # loss, accuracy = model.get_model().evaluate(
+        # #     self.x_test, self.y_test, batch_size=self.args.batch_size
+        # # )
+
+        # model.get_model().eval()
+        # test_loader = torch.utils.data.DataLoader(
+        #     list(zip(self.x_test, self.y_test)), batch_size=self.args.batch_size, shuffle=False
         # )
+        # criterion = nn.CrossEntropyLoss()
+        # correct = 0
+        # total = 0
+        
 
-        model.get_model().eval()
-        test_loader = torch.utils.data.DataLoader(
-            list(zip(self.x_test, self.y_test)), batch_size=self.args.batch_size, shuffle=False
-        )
+        # with torch.no_grad():
+        #     for x_batch, y_batch in test_loader:
+        #         outputs = model.get_model()(x_batch)
+        #         loss = criterion(outputs, y_batch)
+        #         test_loss += loss.item()
+        #         _, predicted = torch.max(outputs.data, 1)
+        #         total += y_batch.size(0)
+        #         correct += (predicted == y_batch).sum().item()
+        #         all_preds.extend(predicted.cpu().numpy())
+        #         all_labels.extend(y_batch.cpu().numpy())
+            
+        self.model.eval()
+        self.model.set_parameters(parameters)
         criterion = nn.CrossEntropyLoss()
+        test_loss = 0.0
         correct = 0
         total = 0
-        test_loss = 0.0
         all_preds = []
         all_labels = []
-
         with torch.no_grad():
-            for x_batch, y_batch in test_loader:
-                outputs = model.get_model()(x_batch)
+            for x_batch, y_batch in self.test_loader:
+                outputs = self.model(x_batch)
                 loss = criterion(outputs, y_batch)
-                test_loss += loss.item()
+                test_loss += loss.item()  # Convert tensor to float
                 _, predicted = torch.max(outputs.data, 1)
                 total += y_batch.size(0)
                 correct += (predicted == y_batch).sum().item()
@@ -172,6 +206,8 @@ class Client(fl.client.NumPyClient):
 
         accuracy = correct / total
         f1 = f1_score(all_labels, all_preds, average='weighted')
+        # Ensure the loss is averaged over the number of batches
+        avg_test_loss = float(test_loss / len(self.test_loader))
 
         # ## Calculate F1 score
         # y_pred = model.get_model().predict(self.x_test)
@@ -180,17 +216,27 @@ class Client(fl.client.NumPyClient):
 
         # Return the loss, the number of examples evaluated on and the accuracy
         #return float(loss), len(self.x_test), {"loss": float(loss), "accuracy": float(accuracy), "f1": float(f1)} ## Add loss and f1
-        return test_loss / len(test_loader), len(self.x_test), {"loss": test_loss / len(test_loader), "accuracy": accuracy, "f1": f1}
+        return (avg_test_loss, len(self.x_test), {"loss": avg_test_loss, "accuracy": accuracy, "f1": f1})
+
 
     def evaluate_model(self):
-        model.get_model().eval()
+        # model.get_model().eval()
+        # correct = 0
+        # total = 0
+        # with torch.no_grad():
+        #     for x_batch, y_batch in torch.utils.data.DataLoader(
+        #         list(zip(self.x_test, self.y_test)), batch_size=self.args.batch_size, shuffle=False
+        #     ):
+        #         outputs = model.get_model()(x_batch)
+        #         _, predicted = torch.max(outputs.data, 1)
+        #         total += y_batch.size(0)
+        #         correct += (predicted == y_batch).sum().item()
+        self.model.eval()
         correct = 0
         total = 0
         with torch.no_grad():
-            for x_batch, y_batch in torch.utils.data.DataLoader(
-                list(zip(self.x_test, self.y_test)), batch_size=self.args.batch_size, shuffle=False
-            ):
-                outputs = model.get_model()(x_batch)
+            for x_batch, y_batch in self.test_loader:
+                outputs = self.model(x_batch)
                 _, predicted = torch.max(outputs.data, 1)
                 total += y_batch.size(0)
                 correct += (predicted == y_batch).sum().item()

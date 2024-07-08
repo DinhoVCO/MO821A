@@ -1,6 +1,6 @@
 #import tensorflow as tf
 #from tensorflow.keras import layers, models
-#import torch
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
@@ -90,6 +90,7 @@ class Model(nn.Module):
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, 10)
         self.optimizer = optim.Adam(self.parameters(), lr=learning_rate)
+        self.loss_function = nn.CrossEntropyLoss()
 
     def forward(self, x):
         x = F.tanh(self.conv1(x))
@@ -104,6 +105,22 @@ class Model(nn.Module):
 
     # def compile(self):
     #     pass
+    def set_parameters(self, parameters):
+        for param, new_param in zip(self.parameters(), parameters):
+            param.data = torch.tensor(new_param, dtype=param.data.dtype)
+
+    def get_parameters(self):
+        return [param.data.detach().cpu().numpy() for param in self.parameters()]
+
+    def train_model(self, train_loader, epochs=2):
+        self.train()
+        for epoch in range(epochs):
+            for x_batch, y_batch in train_loader:
+                self.optimizer.zero_grad()
+                outputs = self(x_batch)
+                loss = self.loss_function(outputs, y_batch)
+                loss.backward()
+                self.optimizer.step()
 
     def get_model(self):
         return self
