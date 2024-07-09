@@ -6,6 +6,8 @@ WORKDIR /app
 
 # Copy the requirements file into the container
 COPY requirements.txt /app/requirements.txt
+COPY server.py /app/server.py
+COPY strategy.py /app/strategy.py
 
 
 # Install gcc and other dependencies

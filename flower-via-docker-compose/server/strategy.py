@@ -19,7 +19,7 @@ class FedCustom(fl.server.strategy.FedAvg):
         latency_gauge: Gauge = None, 
         log_file: str = "metrics.log", 
         patience: int = 3, ## Add patience for early stopping 
-        min_available_clients: int = 5, ## Add min clients to start round
+        min_available_clients: int = 2, ## Add min clients to start round
         *args, **kwargs ## Add log_file
     ):
         super().__init__(*args, **kwargs)

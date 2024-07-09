@@ -23,9 +23,9 @@ def create_docker_compose(args):
     # cpus is used to set the number of CPUs available to the container as a fraction of the total number of CPUs on the host machine.
     # mem_limit is used to set the memory limit for the container.
     client_configs = [
-        {"mem_limit": "6g", "batch_size": 32, "cpus": 1, "learning_rate": 0.01},
-        {"mem_limit": "6g", "batch_size": 32, "cpus": 1, "learning_rate": 0.01},
-        {"mem_limit": "6g", "batch_size": 32, "cpus": 1, "learning_rate": 0.01},
+        {"mem_limit": "6g", "batch_size": 32, "cpus": 2, "learning_rate": 0.001},
+        {"mem_limit": "6g", "batch_size": 32, "cpus": 2, "learning_rate": 0.001},
+        {"mem_limit": "6g", "batch_size": 32, "cpus": 2, "learning_rate": 0.01},
         {"mem_limit": "6g", "batch_size": 32, "cpus": 1, "learning_rate": 0.01},
         {"mem_limit": "6g", "batch_size": 32, "cpus": 1, "learning_rate": 0.01},
         {"mem_limit": "6g", "batch_size": 32, "cpus": 1, "learning_rate": 0.01},

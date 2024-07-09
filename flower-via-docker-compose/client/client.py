@@ -3,9 +3,9 @@ import argparse
 import flwr as fl
 import tensorflow as tf
 import logging
-from helpers.load_data import load_data
+from load_data import load_data
 #from model.model import Model
-from model.model import Net2
+from model import Net2
 import time ##
 from sklearn.metrics import f1_score ##
 #from model.model import get_model
@@ -20,7 +20,7 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 parser = argparse.ArgumentParser(description="Flower client")
 
 parser.add_argument(
-    "--server_address", type=str, default="server:8080", help="Address of the server"
+    "--server_address", type=str, default="127.0.0.1:8080", help="Address of the server"
 )
 parser.add_argument(
     "--batch_size", type=int, default=32, help="Batch size for training"
@@ -121,7 +121,9 @@ class Client(fl.client.NumPyClient):
 def start_fl_client():
     try:
         client = Client(args).to_client()
-        fl.client.start_client(server_address=args.server_address, client=client) ## server_address=args.server_address para docker  127.0.0.1:8080 sem docker 172.18.255.255:8080 com raspberries
+        #fl.client.start_client(server_address="127.0.0.1:8080", client=client)
+        fl.client.start_client(server_address=args.server_address, client=client)
+         ## server_address=args.server_address para docker  127.0.0.1:8080 sem docker 172.18.255.255:8080 com raspberries
     except Exception as e:
         logger.error("Error starting FL client: %s", e)
         return {"status": "error", "message": str(e)}
