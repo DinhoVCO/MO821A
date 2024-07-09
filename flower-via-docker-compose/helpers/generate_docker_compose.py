@@ -3,10 +3,10 @@ import argparse
 
 parser = argparse.ArgumentParser(description="Generated Docker Compose")
 parser.add_argument(
-    "--total_clients", type=int, default=4, help="Total clients to spawn (default: 2)"
+    "--total_clients", type=int, default=2, help="Total clients to spawn (default: 2)"
 )
 parser.add_argument(
-    "--num_rounds", type=int, default=10, help="Number of FL rounds (default: 10)"
+    "--num_rounds", type=int, default=2, help="Number of FL rounds (default: 10)"
 )
 parser.add_argument(
     "--data_percentage",
@@ -19,7 +19,7 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    "--partitioner_type", type=str, default="DIRICHLET", help="Type of partitioner to use ('PARTITIONER' or 'DIRICHLET')"
+    "--partitioner_type", type=str, default="PARTITIONER", help="Type of partitioner to use ('PARTITIONER' or 'DIRICHLET')"
 )
 
 
