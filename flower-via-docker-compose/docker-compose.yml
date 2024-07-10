@@ -52,5 +52,71 @@ services:
     command:
       - --config=/etc/grafana/grafana.ini
 
+
+  server:
+    container_name: server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python server.py --number_of_rounds=2
+    environment:
+      FLASK_RUN_PORT: 6000
+      DOCKER_HOST_IP: host.docker.internal
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock      
+    ports:
+      - "6000:6000"
+      - "8265:8265"
+      - "8000:8000"
+    depends_on:
+      - prometheus
+      - grafana
+
+  client1:
+    container_name: client1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python client.py --server_address=server:8080 --data_percentage=1 --partitioner_type=PARTITIONER  --client_id=1 --total_clients=2 --batch_size=32 --learning_rate=0.001
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: "2g"
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "6001:6001"
+    depends_on:
+      - server
+    environment:
+      FLASK_RUN_PORT: 6001
+      container_name: client1
+      DOCKER_HOST_IP: host.docker.internal
+
+  client2:
+    container_name: client2
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python client.py --server_address=server:8080 --data_percentage=1 --partitioner_type=PARTITIONER  --client_id=2 --total_clients=2 --batch_size=32 --learning_rate=0.001
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: "2g"
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "6002:6002"
+    depends_on:
+      - server
+    environment:
+      FLASK_RUN_PORT: 6002
+      container_name: client2
+      DOCKER_HOST_IP: host.docker.internal
 volumes:
   grafana-storage:
